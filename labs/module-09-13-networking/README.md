@@ -53,7 +53,7 @@ multipass shell labvm
 sudo bash setup-net.sh
 ```
 
-This adds a deliberately **wrong** `/etc/hosts` entry claiming `fileserver` lives at `10.99.99.99`.
+This adds a deliberately **wrong** `/etc/hosts` entry claiming `fileserver` lives at `192.0.2.123`.
 
 ---
 
@@ -97,7 +97,7 @@ You are going to see the same host succeed one way and fail another. Pay attenti
    getent hosts fileserver
    ```
 
-   It returns `10.99.99.99`, the bogus address from the setup. **Conclusion to record:** this is a *name-resolution* problem, not a connectivity problem. The network is fine; the system is just being told the wrong address for the name.
+   It returns `192.0.2.123`, the bogus address from the setup. **Conclusion to record:** this is a *name-resolution* problem, not a connectivity problem. The network is fine; the system is just being told the wrong address for the name.
 
 3. **Fix the mapping.** Edit `/etc/hosts` with `sudo` and replace the wrong address with `fileserver`'s real IP:
 
@@ -105,7 +105,7 @@ You are going to see the same host succeed one way and fail another. Pay attenti
    sudo nano /etc/hosts
    ```
 
-   Change the `10.99.99.99 fileserver` line so the IP matches what `multipass list` shows for `fileserver`. Save and exit.
+   Change the `192.0.2.123 fileserver` line so the IP matches what `multipass list` shows for `fileserver`. Save and exit.
 
 4. **Verify the fix:**
 

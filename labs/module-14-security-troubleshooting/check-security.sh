@@ -33,25 +33,36 @@ else
   ok "backup-helper was removed entirely (also an acceptable fix)"
 fi
 
-# 2. /opt/payroll/salaries.csv: not readable or writable by GROUP or OTHERS.
-#    The lab says "only root" should read/write, so both group and other bits
-#    must be zero (mode 600 or 400 is correct; anything else fails).
+# 2. /opt/payroll/salaries.csv: owned by root:root AND not readable or writable
+#    by GROUP or OTHERS. The lab says "only root" should read/write, so the
+#    owner must actually be root (mode 600 owned by ubuntu still gives ubuntu
+#    full access — that's not "only root").
+owner_of() { stat -c '%U' "$1" 2>/dev/null; }
+group_of() { stat -c '%G' "$1" 2>/dev/null; }
 if [[ -f /opt/payroll/salaries.csv ]]; then
   m=$(mode /opt/payroll/salaries.csv)
+  ow=$(owner_of /opt/payroll/salaries.csv)
+  gr=$(group_of /opt/payroll/salaries.csv)
   # Zero-pad — `stat -c '%a'` strips leading zeros, so a mode like 040 prints
   # as '40' and would leave the digit slices below empty.
   m_padded=$(printf '%03d' "$m")
   perms="${m_padded: -3}"
   group_digit="${perms:1:1}"
   other_digit="${perms:2:1}"
-  if (( (other_digit & 6) == 0 && (group_digit & 6) == 0 )); then
-    ok "salaries.csv is locked down — neither group nor others can read or write it (mode $m)"
-  elif (( (other_digit & 2) != 0 )); then
-    no "salaries.csv is still world-writable (mode $m) — fix the permissions"
-  elif (( (other_digit & 4) != 0 )); then
-    no "salaries.csv is no longer world-writable but is still world-readable (mode $m) — payroll data should not be readable by others"
+  bits_locked=0
+  if (( (other_digit & 6) == 0 && (group_digit & 6) == 0 )); then bits_locked=1; fi
+  if (( bits_locked == 1 )) && [[ "$ow" == "root" && "$gr" == "root" ]]; then
+    ok "salaries.csv is owned by root:root and locked down from group/others (mode $m)"
+  elif (( bits_locked == 0 )); then
+    if (( (other_digit & 2) != 0 )); then
+      no "salaries.csv is still world-writable (mode $m) — fix the permissions"
+    elif (( (other_digit & 4) != 0 )); then
+      no "salaries.csv is no longer world-writable but is still world-readable (mode $m) — payroll data should not be readable by others"
+    else
+      no "salaries.csv is still group-readable or group-writable (mode $m) — 'only root' means group bits must be 0 too"
+    fi
   else
-    no "salaries.csv is still group-readable or group-writable (mode $m) — 'only root' means group bits must be 0 too"
+    no "salaries.csv permissions look OK but ownership is $ow:$gr — for 'only root' the owner must be root:root"
   fi
 else
   no "salaries.csv is missing — it should exist but be properly secured, not deleted"

@@ -91,10 +91,10 @@ On Windows the path looks like `C:\Users\YOU\Downloads\setup-example.sh` instead
 multipass shell labvm
 ```
 
-Your prompt changes to `ubuntu@labvm:~$`. You are now *inside* the Linux system. Run the setup script to build the scenario:
+Your prompt changes to `ubuntu@labvm:~$`. You are now *inside* the Linux system. Run the setup script to build the scenario (the lab setup scripts always need root):
 
 ```
-bash setup-example.sh
+sudo bash setup-example.sh
 ```
 
 ### Step 4 — Do the lab

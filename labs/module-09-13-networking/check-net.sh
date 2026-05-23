@@ -22,13 +22,20 @@ else
   no "No default route found — your VM cannot reach other networks"
 fi
 
-# 2. /etc/hosts has a fileserver entry that is NO LONGER the bogus 10.99.99.99
+# 2. /etc/hosts has a fileserver entry that is NO LONGER the bogus address,
+#    NOT loopback (a common "cheat" that makes ping succeed without finding
+#    the real second VM), and NOT broadcast/all-zeros.
+BOGUS_IP="192.0.2.123"
 if grep -qE '[[:space:]]fileserver([[:space:]]|$)' /etc/hosts; then
   ip_for_name=$(getent hosts fileserver | awk '{print $1; exit}')
   if [[ -z "$ip_for_name" ]]; then
     no "'fileserver' is in /etc/hosts but does not resolve — check the line format"
-  elif [[ "$ip_for_name" == "10.99.99.99" ]]; then
-    no "'fileserver' still resolves to the bogus 10.99.99.99 — replace it with the real IP from 'multipass list'"
+  elif [[ "$ip_for_name" == "$BOGUS_IP" ]]; then
+    no "'fileserver' still resolves to the bogus $BOGUS_IP — replace it with the real IP from 'multipass list'"
+  elif [[ "$ip_for_name" =~ ^127\. ]]; then
+    no "'fileserver' resolves to loopback ($ip_for_name) — that pings, but it's not the real second VM"
+  elif [[ "$ip_for_name" == "0.0.0.0" || "$ip_for_name" == "255.255.255.255" ]]; then
+    no "'fileserver' resolves to $ip_for_name, which isn't a real host — use the IP from 'multipass list'"
   else
     ok "'fileserver' resolves to $ip_for_name (no longer the bogus address)"
   fi

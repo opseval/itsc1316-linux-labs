@@ -33,6 +33,20 @@ function Cleanup {
   Write-Host ">> Cleanup done."
 }
 
+function Print-Summary {
+  Write-Host ""
+  Write-Host "=================================================="
+  Write-Host "  Passed: $pass    Failed: $fail    Warnings: $warn"
+  if ($fail -eq 0 -and $pass -gt 0) {
+    Write-Host "  RESULT: Your computer is READY for the labs."
+    Write-Host "  Submit a screenshot of this summary for the Week 1 check-in."
+  } else {
+    Write-Host "  RESULT: Something needs attention - see the [FAIL] lines above,"
+    Write-Host "  then post them in the Q&A board with this output."
+  }
+  Write-Host "=================================================="
+}
+
 Write-Host "=================================================="
 Write-Host " ITSC-1316 Preflight Check (Windows / PowerShell)"
 Write-Host "=================================================="
@@ -61,8 +75,7 @@ try {
     Write-Host "         in BIOS/UEFI, Hyper-V not enabled (Pro/Enterprise) or VirtualBox"
     Write-Host "         not installed (Home edition), or not enough free RAM/disk."
     Write-Host "         Try running:  multipass launch 22.04 --name $VM   to see the full error."
-    Cleanup
-    return
+    return  # finally{} below runs Cleanup + Print-Summary
   }
 
   # 3. Transfer a file IN
@@ -99,16 +112,7 @@ try {
 }
 finally {
   Cleanup
+  # Always show the summary, even on early return — students are told to
+  # screenshot it for the Week 1 check-in, so it can't be skipped on failure.
+  Print-Summary
 }
-
-Write-Host ""
-Write-Host "=================================================="
-Write-Host "  Passed: $pass    Failed: $fail    Warnings: $warn"
-if ($fail -eq 0) {
-  Write-Host "  RESULT: Your computer is READY for the labs."
-  Write-Host "  Submit a screenshot of this summary for the Week 1 check-in."
-} else {
-  Write-Host "  RESULT: Something needs attention - see the [FAIL] lines above,"
-  Write-Host "  then post them in the Q&A board with this output."
-}
-Write-Host "=================================================="

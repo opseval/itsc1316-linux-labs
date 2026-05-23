@@ -26,10 +26,10 @@ By the end of this lab you will be able to:
 
 ## Start the Lab Environment
 
-> **Snapshot first.** This lab deliberately breaks things. From your computer's terminal, take a restore point before you begin:
+> **Snapshot first.** This lab deliberately breaks things. From your computer's terminal, take a *named* restore point before you begin (so you can find it later, even if you've taken other snapshots):
 >
 > ```
-> multipass snapshot labvm
+> multipass snapshot --name pre-mod14 labvm
 > ```
 
 Start the VM and transfer the scripts (from your computer's terminal, at the **root of your cloned repo**):
@@ -134,7 +134,7 @@ Submit **two things**:
 When you are done you can restore your clean snapshot if you want a tidy system for later labs:
 
 ```
-multipass restore labvm.snapshot1
+multipass restore labvm.pre-mod14
 ```
 
 Or just `multipass stop labvm` to leave it as-is. Do not delete `labvm`.

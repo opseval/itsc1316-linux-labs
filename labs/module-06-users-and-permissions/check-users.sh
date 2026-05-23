@@ -63,13 +63,15 @@ if [[ -f /salesteam/generate_reports.sh ]]; then
   o="${perms:0:1}"   # owner digit
   g="${perms:1:1}"   # group digit
   t="${perms:2:1}"   # other digit
-  # Execute bit is the 1's place of each octal digit.
+  # Required: owner has execute (1); group has no execute (1) AND no write (2);
+  # other has no execute AND no write. A mode like 722 would slip past an
+  # execute-only check while still letting anyone overwrite the script.
   perm_ok=0
-  if (( (o & 1) == 1 && (g & 1) == 0 && (t & 1) == 0 )); then perm_ok=1; fi
+  if (( (o & 1) == 1 && (g & 3) == 0 && (t & 3) == 0 )); then perm_ok=1; fi
   if (( perm_ok == 1 )) && [[ "$o_user" == "ubuntu" && "$o_group" == "salesteam" ]]; then
-    ok "generate_reports.sh is owner-only executable, owned by ubuntu:salesteam (mode $m)"
+    ok "generate_reports.sh is owner-only executable and non-writable by others, owned by ubuntu:salesteam (mode $m)"
   elif (( perm_ok == 0 )); then
-    no "generate_reports.sh should be executable by the owner only (mode $m: owner-exec on, group/other-exec off)"
+    no "generate_reports.sh: owner must have execute; group AND other must have neither execute nor write (mode $m)"
   else
     no "generate_reports.sh permissions are right but ownership is $o_user:$o_group, should be ubuntu:salesteam"
   fi
@@ -77,12 +79,17 @@ else
   no "generate_reports.sh is missing from /salesteam"
 fi
 
-# 4. The three quarterly .xls reports were produced (script was actually run)
-count=$(ls /salesteam/Q*-report.xls 2>/dev/null | wc -l)
-if (( count == 3 )); then
-  ok "Three quarterly .xls reports exist (script was executed)"
+# 4. The three quarterly .xls reports were produced (script was actually run).
+#    Check the exact filenames the script generates — not just any Q*-report
+#    glob — so manually-touched files like Qx-report.xls don't slip through.
+missing=()
+for q in Q1 Q2 Q3; do
+  [[ -f "/salesteam/${q}-report.xls" ]] || missing+=("${q}-report.xls")
+done
+if (( ${#missing[@]} == 0 )); then
+  ok "Q1-report.xls, Q2-report.xls, Q3-report.xls all exist (script was executed)"
 else
-  no "Expected three Q*-report.xls files in /salesteam (found $count) — did you run the script?"
+  no "Missing in /salesteam: ${missing[*]} — did you actually run generate_reports.sh?"
 fi
 
 echo

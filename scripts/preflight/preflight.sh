@@ -21,6 +21,20 @@ ok()   { echo "  [PASS] $1"; pass=$((pass+1)); }
 no()   { echo "  [FAIL] $1"; fail=$((fail+1)); }
 note() { echo "  [INFO] $1"; }
 
+print_summary() {
+  echo
+  echo "=================================================="
+  echo "  Passed: $pass    Failed: $fail    Warnings: $warn"
+  if (( fail == 0 && pass > 0 )); then
+    echo "  RESULT: Your computer is READY for the labs."
+    echo "  Submit a screenshot of this summary for the Week 1 check-in."
+  else
+    echo "  RESULT: Something needs attention — see the [FAIL] lines above,"
+    echo "  then post them in the Q&A board with this output."
+  fi
+  echo "=================================================="
+}
+
 cleanup() {
   echo
   echo ">> Cleaning up the throwaway VM..."
@@ -28,6 +42,9 @@ cleanup() {
   multipass purge       >/dev/null 2>&1 || true
   rm -f "$TMPFILE"      >/dev/null 2>&1 || true
   echo ">> Cleanup done."
+  # Always show the summary block, even on early exit — students are told to
+  # screenshot it for the Week 1 check-in, so it can't be skipped on failure.
+  print_summary
 }
 trap cleanup EXIT
 
@@ -96,14 +113,5 @@ echo
 note "VM list right now:"
 multipass list 2>/dev/null | sed 's/^/        /'
 
-echo
-echo "=================================================="
-echo "  Passed: $pass    Failed: $fail    Warnings: $warn"
-if (( fail == 0 )); then
-  echo "  RESULT: Your computer is READY for the labs."
-  echo "  Submit a screenshot of this summary for the Week 1 check-in."
-else
-  echo "  RESULT: Something needs attention — see the [FAIL] lines above,"
-  echo "  then post them in the Q&A board with this output."
-fi
-echo "=================================================="
+# Summary block is printed by the EXIT trap (print_summary) so it appears
+# both on the happy path and on any early exit.

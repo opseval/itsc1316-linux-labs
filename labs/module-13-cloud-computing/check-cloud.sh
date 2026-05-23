@@ -31,23 +31,29 @@ fi
 # 3. clouduser has an SSH key installed (key-based auth configured).
 #    /home/clouduser/.ssh/ is mode 700 owned by clouduser, so we need sudo
 #    to peek at it from the ubuntu user that 'multipass shell' lands in.
+#    Also reject garbage / private keys — ssh-keygen -l -f only succeeds on
+#    a file whose lines are valid OpenSSH public keys.
 if sudo test -s /home/clouduser/.ssh/authorized_keys; then
   if sudo grep -q 'PASTE_YOUR_PUBLIC_KEY_HERE' /home/clouduser/.ssh/authorized_keys; then
     no "clouduser's authorized_keys still contains the placeholder — paste your REAL public key"
+  elif ! sudo ssh-keygen -l -f /home/clouduser/.ssh/authorized_keys >/dev/null 2>&1; then
+    no "clouduser's authorized_keys isn't a valid OpenSSH public key — make sure you pasted ~/.ssh/id_ed25519.pub (the .pub file), not the private key or other text"
   else
-    ok "clouduser has an SSH public key installed (key-based auth is set up)"
+    ok "clouduser has a valid SSH public key installed (key-based auth is set up)"
   fi
 else
   no "clouduser has no authorized_keys — the ssh_authorized_keys block did not apply"
 fi
 
 # 4. clouduser password login is locked (cloud servers don't use passwords).
-#    passwd -S reads /etc/shadow, which is root-only on Ubuntu.
+#    passwd -S reads /etc/shadow, which is root-only on Ubuntu. Ubuntu 22.04
+#    reports L (locked) or LK reliably — earlier we treated this as a soft
+#    INFO, but a student with lock_passwd:false in cloud-init would silently
+#    pass. Treat as a real check.
 if sudo passwd -S clouduser 2>/dev/null | grep -qE ' L | LK '; then
   ok "clouduser password login is locked (key-only access, the cloud way)"
 else
-  # Not all images report identically; treat as a soft check.
-  echo "  INFO  could not confirm password is locked (lock_passwd) — verify with: sudo passwd -S clouduser"
+  no "clouduser password login is NOT locked — set 'lock_passwd: true' under the clouduser users: entry in cloud-init.yaml"
 fi
 
 # 5. nginx is installed and running (a package installed on first boot)

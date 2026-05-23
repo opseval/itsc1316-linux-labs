@@ -65,10 +65,10 @@ Set the owner of `/salesteam` (and everything inside it) to the `ubuntu` user an
 > Think about *why* group ownership matters here: the whole point is that everyone on the sales team (members of `salesteam`) should be able to collaborate in this folder.
 
 **2. Create a shared notes file with exact permissions.**
-Create the file `/salesteam/meeting-highlights.txt`. Set its permissions so that the **owner and the group can read and write it, but everyone else gets nothing** (no read, no write, no execute). Put a line of text in it so it is not empty.
+Create the file `/salesteam/meeting-highlights.txt`. Make sure its group is **`salesteam`** (a new file inherits *your* group by default, which is `ubuntu` — not the team's group — so you'll need to set it explicitly, or have set the directory's setgid bit beforehand). Set its permissions so that the **owner and the group can read and write it, but everyone else gets nothing** (no read, no write, no execute). Put a line of text in it so it is not empty.
 
 **3. Lock down the report script.**
-The file `/salesteam/generate_reports.sh` should be executable **by its owner only** — not by the group, not by others — while keeping it readable. Set ownership and permissions accordingly.
+The file `/salesteam/generate_reports.sh` should be **executable by its owner only** — not by the group, not by others — and **not writable by the group or others either** (a script anyone can rewrite is just as dangerous as a script anyone can execute). Keep it readable. Set ownership to `ubuntu:salesteam` and permissions accordingly.
 
 **4. Run the script and verify its output.**
 Run the script using the execute bit you just set — `cd /salesteam && ./generate_reports.sh` — rather than `bash generate_reports.sh` (which would bypass the permission you're trying to test). Confirm that it creates **three quarterly reports** with the `.xls` extension in `/salesteam` (`Q1-report.xls`, `Q2-report.xls`, `Q3-report.xls`).
