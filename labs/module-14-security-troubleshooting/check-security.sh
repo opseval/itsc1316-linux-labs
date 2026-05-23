@@ -33,17 +33,22 @@ else
   ok "backup-helper was removed entirely (also an acceptable fix)"
 fi
 
-# 2. /opt/payroll/salaries.csv is no longer world-writable AND not world-readable
+# 2. /opt/payroll/salaries.csv: not readable or writable by GROUP or OTHERS.
+#    The lab says "only root" should read/write, so both group and other bits
+#    must be zero (mode 600 or 400 is correct; anything else fails).
 if [[ -f /opt/payroll/salaries.csv ]]; then
   m=$(mode /opt/payroll/salaries.csv)
-  other="${m: -1}"
-  # world write bit (2) must be off; ideally world read (4) off too for payroll data
-  if (( (other & 2) == 0 && (other & 4) == 0 )); then
-    ok "salaries.csv is locked down from 'others' (mode $m)"
-  elif (( (other & 2) == 0 )); then
+  perms="${m: -3}"
+  group_digit="${perms:1:1}"
+  other_digit="${perms:2:1}"
+  if (( (other_digit & 6) == 0 && (group_digit & 6) == 0 )); then
+    ok "salaries.csv is locked down — neither group nor others can read or write it (mode $m)"
+  elif (( (other_digit & 2) != 0 )); then
+    no "salaries.csv is still world-writable (mode $m) — fix the permissions"
+  elif (( (other_digit & 4) != 0 )); then
     no "salaries.csv is no longer world-writable but is still world-readable (mode $m) — payroll data should not be readable by others"
   else
-    no "salaries.csv is still world-writable (mode $m) — fix the permissions"
+    no "salaries.csv is still group-readable or group-writable (mode $m) — 'only root' means group bits must be 0 too"
   fi
 else
   no "salaries.csv is missing — it should exist but be properly secured, not deleted"

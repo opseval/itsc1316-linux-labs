@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# setup-net.sh  —  Module 13: Advanced Network Configuration
+# setup-net.sh  —  Modules 9 & 13: Advanced Network Configuration
 #
 # Run this INSIDE your labvm with sudo, AFTER you have launched the second
 # VM (see the lab instructions):
@@ -18,12 +18,15 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-MARKER="# lab13-fileserver"
+MARKER="# itsc1316-fileserver"
 
 echo "[setup] Planting a misconfigured hosts entry for 'fileserver'..."
 
-# Remove any prior lab entry so the script is re-runnable.
+# Make the script re-runnable: drop any prior lab marker AND any leftover
+# bogus 10.99.99.99 fileserver line (in case the student removed the marker
+# while editing /etc/hosts by hand).
 sed -i "/${MARKER}/d" /etc/hosts
+sed -i '/^10\.99\.99\.99[[:space:]].*fileserver/d' /etc/hosts
 
 # Add a deliberately WRONG mapping (an unreachable address).
 echo "10.99.99.99    fileserver    ${MARKER}" >> /etc/hosts

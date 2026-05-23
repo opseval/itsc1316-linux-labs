@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# check-net.sh  —  Module 13: Advanced Network Configuration
+# check-net.sh  —  Modules 9 & 13: Advanced Network Configuration
 #
 # Run inside labvm:   bash check-net.sh
 # The second VM ("fileserver") must be running for the name-resolution
@@ -11,7 +11,7 @@ fail=0
 ok() { echo "  PASS  $1"; pass=$((pass+1)); }
 no() { echo "  FAIL  $1"; fail=$((fail+1)); }
 
-echo "=== Module 13 Lab Check: Advanced Network Configuration ==="
+echo "=== Modules 9 & 13 Lab Check: Advanced Network Configuration ==="
 echo
 
 # 1. There is a default route (basic routing sanity).

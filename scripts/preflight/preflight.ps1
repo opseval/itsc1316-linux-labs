@@ -66,7 +66,9 @@ try {
   }
 
   # 3. Transfer a file IN
-  Set-Content -Path $TmpFile -Value $Token -NoNewline
+  # -Encoding ASCII so Windows PowerShell 5.1 doesn't emit UTF-16-LE (with BOM),
+  # which would garble what 'cat' reads back inside the Linux VM.
+  Set-Content -Path $TmpFile -Value $Token -NoNewline -Encoding ASCII
   multipass transfer $TmpFile "$($VM):/home/ubuntu/preflight-token.txt" 2>$null | Out-Null
   if ($LASTEXITCODE -eq 0) { Ok "Transferred a file into the VM" }
   else { No "File transfer into the VM failed" }
@@ -82,7 +84,9 @@ try {
   else { No "sudo did not return root inside the VM" }
 
   # 6. Network from inside the VM
-  multipass exec $VM -- bash -c "getent hosts ubuntu.com > /dev/null 2>&1" 2>$null | Out-Null
+  # Calling getent directly avoids PowerShell 5.1's native-arg parsing eating
+  # the quotes around 'bash -c "..."' and breaking shell-side redirection.
+  multipass exec $VM -- getent hosts ubuntu.com 2>$null | Out-Null
   if ($LASTEXITCODE -eq 0) { Ok "The VM has working internet name resolution" }
   else { Write-Host "  [WARN] The VM could not resolve ubuntu.com - some labs install packages and may need this. Check your network/VPN."; $warn++ }
 

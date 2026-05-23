@@ -71,7 +71,7 @@ Create the file `/salesteam/meeting-highlights.txt`. Set its permissions so that
 The file `/salesteam/generate_reports.sh` should be executable **by its owner only** — not by the group, not by others — while keeping it readable. Set ownership and permissions accordingly.
 
 **4. Run the script and verify its output.**
-Execute `generate_reports.sh`. Confirm that it creates **three quarterly reports** with the `.xls` extension in `/salesteam` (`Q1-report.xls`, `Q2-report.xls`, `Q3-report.xls`).
+Run the script using the execute bit you just set — `cd /salesteam && ./generate_reports.sh` — rather than `bash generate_reports.sh` (which would bypass the permission you're trying to test). Confirm that it creates **three quarterly reports** with the `.xls` extension in `/salesteam` (`Q1-report.xls`, `Q2-report.xls`, `Q3-report.xls`).
 
 > **If something does not behave as expected**, re-check ownership first, then the execute bit on the script, then whether any directory permission is blocking access. Most permission problems are one of those three.
 

@@ -28,9 +28,11 @@ else
   no "user 'clouduser' was not created — check the 'users:' block in your cloud-init.yaml"
 fi
 
-# 3. clouduser has an SSH key installed (key-based auth configured)
-if [[ -s /home/clouduser/.ssh/authorized_keys ]]; then
-  if grep -q 'PASTE_YOUR_PUBLIC_KEY_HERE' /home/clouduser/.ssh/authorized_keys; then
+# 3. clouduser has an SSH key installed (key-based auth configured).
+#    /home/clouduser/.ssh/ is mode 700 owned by clouduser, so we need sudo
+#    to peek at it from the ubuntu user that 'multipass shell' lands in.
+if sudo test -s /home/clouduser/.ssh/authorized_keys; then
+  if sudo grep -q 'PASTE_YOUR_PUBLIC_KEY_HERE' /home/clouduser/.ssh/authorized_keys; then
     no "clouduser's authorized_keys still contains the placeholder — paste your REAL public key"
   else
     ok "clouduser has an SSH public key installed (key-based auth is set up)"
@@ -39,8 +41,9 @@ else
   no "clouduser has no authorized_keys — the ssh_authorized_keys block did not apply"
 fi
 
-# 4. clouduser password login is locked (cloud servers don't use passwords)
-if passwd -S clouduser 2>/dev/null | grep -qE ' L | LK '; then
+# 4. clouduser password login is locked (cloud servers don't use passwords).
+#    passwd -S reads /etc/shadow, which is root-only on Ubuntu.
+if sudo passwd -S clouduser 2>/dev/null | grep -qE ' L | LK '; then
   ok "clouduser password login is locked (key-only access, the cloud way)"
 else
   # Not all images report identically; treat as a soft check.
@@ -54,12 +57,15 @@ else
   no "nginx is not running — check the 'packages:' and 'runcmd:' blocks"
 fi
 
-# 6. The custom page is being served AND was personalized (placeholder removed)
+# 6. The custom page is being served AND was personalized (placeholder removed
+#    AND a name actually filled in, not blanked out)
 page="$(curl -s http://localhost/ 2>/dev/null)"
 if [[ -z "$page" ]]; then
   no "nothing is being served on http://localhost/ — is nginx up?"
 elif echo "$page" | grep -q 'YOUR_NAME_HERE'; then
   no "your landing page still says YOUR_NAME_HERE — personalize it in cloud-init.yaml"
+elif ! echo "$page" | grep -Eq 'provisioned by [^[:space:]<]'; then
+  no "your landing page does not show a name after 'provisioned by' — fill in your name, don't just delete the placeholder"
 elif echo "$page" | grep -q 'It works'; then
   ok "your custom landing page is being served and is personalized"
 else

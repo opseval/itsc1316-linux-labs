@@ -1,4 +1,4 @@
-# Module 13 Lab: Advanced Network Configuration (Multipass, Two VMs)
+# Modules 9 & 13 Lab: Advanced Network Configuration (Multipass, Two VMs)
 
 **Hands-on multi-machine lab. Replaces the former written assignment. You will run two VMs that talk to each other.**
 
@@ -148,7 +148,7 @@ Fix any FAILs and re-run until everything passes.
 A few sentences per item, in your own words:
 
 ```
-TROUBLESHOOTING WRITEUP — Module 13
+TROUBLESHOOTING WRITEUP — Modules 9 & 13
 Name:
 labvm hostname (run `hostname`):
 
