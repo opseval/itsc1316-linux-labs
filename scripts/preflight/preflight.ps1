@@ -98,12 +98,12 @@ try {
   if ($who -eq "root") { Ok "sudo works inside the VM (you can perform admin tasks)" }
   else { No "sudo did not return root inside the VM" }
 
-  # 6. Network from inside the VM
+  # 6. Network from inside the VM (real FAIL — labs install packages).
   # Calling getent directly avoids PowerShell 5.1's native-arg parsing eating
   # the quotes around 'bash -c "..."' and breaking shell-side redirection.
   multipass exec $VM -- getent hosts ubuntu.com 2>$null | Out-Null
   if ($LASTEXITCODE -eq 0) { Ok "The VM has working internet name resolution" }
-  else { Write-Host "  [WARN] The VM could not resolve ubuntu.com - some labs install packages and may need this. Check your network/VPN."; $warn++ }
+  else { No "The VM could not resolve ubuntu.com - labs that install packages will fail. Check your network/VPN (especially work/campus restrictions)." }
 
   # 7. VM list snapshot
   Write-Host ""

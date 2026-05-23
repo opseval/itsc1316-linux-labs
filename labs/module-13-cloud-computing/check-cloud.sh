@@ -31,13 +31,22 @@ fi
 # 3. clouduser has an SSH key installed (key-based auth configured).
 #    /home/clouduser/.ssh/ is mode 700 owned by clouduser, so we need sudo
 #    to peek at it from the ubuntu user that 'multipass shell' lands in.
-#    Also reject garbage / private keys — ssh-keygen -l -f only succeeds on
-#    a file whose lines are valid OpenSSH public keys.
+#    Validation is layered:
+#      - The placeholder must be gone.
+#      - The file must NOT contain a "BEGIN ... PRIVATE KEY" marker — a
+#        pasted private key is a security incident, not a valid key.
+#        (ssh-keygen -l -f alone happily fingerprints private keys.)
+#      - At least one line must start with a recognized public-key type.
+#      - ssh-keygen -l -f must succeed as a final sanity check.
 if sudo test -s /home/clouduser/.ssh/authorized_keys; then
   if sudo grep -q 'PASTE_YOUR_PUBLIC_KEY_HERE' /home/clouduser/.ssh/authorized_keys; then
     no "clouduser's authorized_keys still contains the placeholder — paste your REAL public key"
+  elif sudo grep -qE 'BEGIN ([A-Z]+ )?PRIVATE KEY' /home/clouduser/.ssh/authorized_keys; then
+    no "DANGER: clouduser's authorized_keys looks like a PRIVATE key — paste ~/.ssh/id_ed25519.pub (the .pub file), and rotate your private key since it was exposed"
+  elif ! sudo grep -qE '^(ssh-(ed25519|rsa|dss)|ecdsa-sha2-nistp(256|384|521)|sk-(ssh-ed25519|ecdsa-sha2-nistp256)@openssh\.com) ' /home/clouduser/.ssh/authorized_keys; then
+    no "clouduser's authorized_keys has no line starting with a recognized public-key type (ssh-ed25519, ssh-rsa, etc.) — make sure you pasted the .pub file"
   elif ! sudo ssh-keygen -l -f /home/clouduser/.ssh/authorized_keys >/dev/null 2>&1; then
-    no "clouduser's authorized_keys isn't a valid OpenSSH public key — make sure you pasted ~/.ssh/id_ed25519.pub (the .pub file), not the private key or other text"
+    no "ssh-keygen could not parse clouduser's authorized_keys — there's something malformed in the line you pasted"
   else
     ok "clouduser has a valid SSH public key installed (key-based auth is set up)"
   fi

@@ -23,9 +23,13 @@ else
 fi
 
 # 2. /etc/hosts has a fileserver entry that is NO LONGER the bogus address,
-#    NOT loopback (a common "cheat" that makes ping succeed without finding
-#    the real second VM), and NOT broadcast/all-zeros.
+#    NOT loopback / broadcast (which would ping without proving anything),
+#    NOT labvm's own IP, and NOT the default gateway. Each of those is a
+#    plausible "cheat" that turns ping into a green check without ever
+#    contacting the real second VM.
 BOGUS_IP="192.0.2.123"
+local_ips=$(ip -o -4 addr show 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | sort -u)
+gateway_ip=$(ip route 2>/dev/null | awk '/^default/ {print $3; exit}')
 if grep -qE '[[:space:]]fileserver([[:space:]]|$)' /etc/hosts; then
   ip_for_name=$(getent hosts fileserver | awk '{print $1; exit}')
   if [[ -z "$ip_for_name" ]]; then
@@ -36,8 +40,12 @@ if grep -qE '[[:space:]]fileserver([[:space:]]|$)' /etc/hosts; then
     no "'fileserver' resolves to loopback ($ip_for_name) — that pings, but it's not the real second VM"
   elif [[ "$ip_for_name" == "0.0.0.0" || "$ip_for_name" == "255.255.255.255" ]]; then
     no "'fileserver' resolves to $ip_for_name, which isn't a real host — use the IP from 'multipass list'"
+  elif [[ -n "$gateway_ip" && "$ip_for_name" == "$gateway_ip" ]]; then
+    no "'fileserver' resolves to the default gateway ($ip_for_name) — that pings, but it's not the second VM"
+  elif printf '%s\n' "$local_ips" | grep -qFx "$ip_for_name"; then
+    no "'fileserver' resolves to one of labvm's OWN IPs ($ip_for_name) — pinging yourself doesn't prove the second VM is reachable"
   else
-    ok "'fileserver' resolves to $ip_for_name (no longer the bogus address)"
+    ok "'fileserver' resolves to $ip_for_name (no longer the bogus address, not local/gateway)"
   fi
 else
   no "No 'fileserver' entry found in /etc/hosts"

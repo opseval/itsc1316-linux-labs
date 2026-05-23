@@ -63,15 +63,17 @@ if [[ -f /salesteam/generate_reports.sh ]]; then
   o="${perms:0:1}"   # owner digit
   g="${perms:1:1}"   # group digit
   t="${perms:2:1}"   # other digit
-  # Required: owner has execute (1); group has no execute (1) AND no write (2);
-  # other has no execute AND no write. A mode like 722 would slip past an
+  # Required: owner has BOTH read (4) and execute (1) — the lab says keep
+  # the script readable, so mode 100 (--x------) isn't acceptable even
+  # though it's "executable by owner only". Group: no write, no execute.
+  # Other: no write, no execute. A mode like 722 would slip past an
   # execute-only check while still letting anyone overwrite the script.
   perm_ok=0
-  if (( (o & 1) == 1 && (g & 3) == 0 && (t & 3) == 0 )); then perm_ok=1; fi
+  if (( (o & 5) == 5 && (g & 3) == 0 && (t & 3) == 0 )); then perm_ok=1; fi
   if (( perm_ok == 1 )) && [[ "$o_user" == "ubuntu" && "$o_group" == "salesteam" ]]; then
     ok "generate_reports.sh is owner-only executable and non-writable by others, owned by ubuntu:salesteam (mode $m)"
   elif (( perm_ok == 0 )); then
-    no "generate_reports.sh: owner must have execute; group AND other must have neither execute nor write (mode $m)"
+    no "generate_reports.sh: owner needs read AND execute; group AND other must have neither execute nor write (mode $m)"
   else
     no "generate_reports.sh permissions are right but ownership is $o_user:$o_group, should be ubuntu:salesteam"
   fi

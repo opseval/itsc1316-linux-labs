@@ -165,10 +165,10 @@ A few commands you will use throughout the semester:
 | Start it again | `multipass start labvm` |
 | Copy a file in | `multipass transfer FILE labvm:/home/ubuntu/` |
 | Copy a file out | `multipass transfer labvm:/home/ubuntu/FILE .` |
-| Take a snapshot before risky work | `multipass snapshot labvm` |
-| Restore a snapshot | `multipass restore labvm.snapshot1` |
+| Take a (named) snapshot before risky work | `multipass stop labvm && multipass snapshot --name BEFORE-X labvm && multipass start labvm` |
+| Restore a snapshot | `multipass stop labvm && multipass restore labvm.BEFORE-X && multipass start labvm` |
 
-> **Tip:** Before any lab that involves "breaking" the system (troubleshooting labs especially), take a snapshot first: `multipass snapshot labvm`. If you paint yourself into a corner, you can restore instead of rebuilding.
+> **Tip — snapshots need the VM stopped.** Multipass refuses to snapshot or restore a *running* instance. The pattern is always: `exit` the VM shell → `multipass stop labvm` → take/restore the snapshot → `multipass start labvm` again. **Name your snapshots** (`--name BEFORE-something`) so you can find them later by name instead of guessing whether `snapshot1` is the right one.
 
 **Do not delete `labvm`** until the semester ends. Some later labs build on earlier state.
 

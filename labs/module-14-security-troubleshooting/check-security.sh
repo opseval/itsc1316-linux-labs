@@ -75,19 +75,22 @@ else
   ok "the runaway 'sysoptimizer' process has been stopped"
 fi
 
-# 4. The broken reportd service is no longer in a failed/active-restarting state.
-#    Acceptable fixes: stop+disable it, or mask it. We pass if it is not running
-#    and not enabled.
+# 4. The broken reportd service is no longer in an active/failed state AND
+#    will not auto-start. Acceptable fixes: stop+disable it, or mask it.
+#    Also explicitly check that the unit isn't in 'failed' state — a unit
+#    that has been disabled but is still failed leaves a red mark in
+#    `systemctl --failed` and is not actually remediated.
 active=$(systemctl is-active reportd.service 2>/dev/null || true)
 enabled=$(systemctl is-enabled reportd.service 2>/dev/null || true)
-if [[ "$active" != "active" && "$active" != "activating" ]]; then
-  if [[ "$enabled" == "disabled" || "$enabled" == "masked" || -z "$enabled" || "$enabled" == "static" ]]; then
-    ok "reportd.service is no longer running and won't auto-start (state: active=$active enabled=$enabled)"
-  else
-    no "reportd.service is stopped but still enabled — disable or mask it (enabled=$enabled)"
-  fi
-else
+failed=$(systemctl is-failed reportd.service 2>/dev/null || true)
+if [[ "$active" == "active" || "$active" == "activating" ]]; then
   no "reportd.service is still trying to run (active=$active) — investigate with journalctl and stop it"
+elif [[ "$failed" == "failed" ]]; then
+  no "reportd.service has been stopped but is still in failed state — run 'sudo systemctl reset-failed reportd.service' after disabling/masking it"
+elif [[ "$enabled" == "disabled" || "$enabled" == "masked" || -z "$enabled" || "$enabled" == "static" ]]; then
+  ok "reportd.service is no longer running, not failed, and won't auto-start (active=$active enabled=$enabled)"
+else
+  no "reportd.service is stopped but still enabled — disable or mask it (enabled=$enabled)"
 fi
 
 echo

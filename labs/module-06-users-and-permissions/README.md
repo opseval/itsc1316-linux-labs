@@ -49,7 +49,16 @@ sudo bash setup-users.sh
 
 This creates a `salesteam` group, two teammates (`avery` and `jordan`), and a `/salesteam` directory containing a `generate_reports.sh` script. The setup deliberately leaves things **misconfigured** — fixing them is the lab.
 
-> **Tip:** Take a snapshot before you start changing things, so you can experiment freely: from your computer's terminal run `multipass snapshot labvm`.
+> **Tip — snapshot before you experiment.** From inside the VM, type `exit` to return to your computer's terminal, then stop the VM and snapshot it (Multipass won't snapshot a running instance), then start it again:
+>
+> ```
+> multipass stop labvm
+> multipass snapshot --name pre-mod06 labvm
+> multipass start labvm
+> multipass shell labvm
+> ```
+>
+> If you paint yourself into a corner, `multipass stop labvm && multipass restore labvm.pre-mod06 && multipass start labvm` rolls back.
 
 ---
 

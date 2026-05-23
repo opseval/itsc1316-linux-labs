@@ -102,10 +102,13 @@ else
 fi
 
 # --- 7. Network from inside the VM (needed for apt installs in labs) ---
+# This is a real FAIL, not a warning: every later lab assumes the VM can
+# resolve names and reach the package mirrors, so a green READY result here
+# without working DNS would be a false negative.
 if multipass exec "$VM" -- bash -c "getent hosts ubuntu.com >/dev/null 2>&1"; then
   ok "The VM has working internet name resolution"
 else
-  warn=$((warn+1)); echo "  [WARN] The VM could not resolve ubuntu.com — some labs install packages and may need this. Check your network/VPN."
+  no "The VM could not resolve ubuntu.com — labs that install packages will fail. Check your network/VPN (especially work/campus restrictions)."
 fi
 
 # --- 8. Host resource snapshot (informational) ---
