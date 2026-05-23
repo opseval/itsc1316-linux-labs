@@ -125,7 +125,7 @@ The `-O` writes each file with its remote name (e.g. `setup-users.sh`); `-fsSL` 
 > less setup-<name>.sh check-<name>.sh
 > ```
 >
-> Press `q` to exit `less`. The check script also prints its own SHA256 when you run it; the grader compares that against [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) to confirm nothing's been tampered with.
+> Press `q` to exit `less`. The check script also auto-fetches [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) from GitHub when you run it and prints `INTEGRITY: VERIFIED` at the top if your local script matches the canonical SHA (the grader looks for that line in your recording). If it prints `*** MISMATCH ***`, you (or something) modified the script — re-fetch a fresh copy with the same `curl` command.
 
 ### Step 3 — Run setup → do the lab → run check
 

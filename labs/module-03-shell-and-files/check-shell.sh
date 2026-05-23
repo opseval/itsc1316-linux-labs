@@ -19,35 +19,49 @@ HOST="$(hostname)"
 echo "=== Module 3 Lab Check: Working with the Shell ==="
 echo
 
-# --- Integrity self-check (auto-compares against canonical CHECKSUMS.txt on GitHub) ---
+# --- Integrity self-check (tamper-evident; auto-compares against canonical CHECKSUMS.txt) ---
+# Resets PATH and uses absolute binaries so a PATH-shimmed `curl`/`sha256sum`
+# can't spoof VERIFIED on a tampered script. The recording is where the grader
+# reads the printed INTEGRITY: line (tamper-evident, not tamper-proof).
 echo "=== check script integrity ==="
 INTEGRITY_REL_PATH="labs/module-03-shell-and-files/check-shell.sh"
 INTEGRITY_REPO_URL="https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main"
+__SAVED_PATH="$PATH"; PATH="/usr/bin:/bin"; unset -f curl sha256sum shasum awk 2>/dev/null
 echo "  Script:      $(basename "$0")"
-if command -v sha256sum >/dev/null 2>&1; then
-  LOCAL_SHA="$(sha256sum "$0" | awk '{print $1}')"
-elif command -v shasum >/dev/null 2>&1; then
-  LOCAL_SHA="$(shasum -a 256 "$0" | awk '{print $1}')"
+if [[ -x /usr/bin/sha256sum ]]; then
+  LOCAL_SHA="$(/usr/bin/sha256sum "$0" | /usr/bin/awk '{print $1}')"
+elif [[ -x /usr/bin/shasum ]]; then
+  LOCAL_SHA="$(/usr/bin/shasum -a 256 "$0" | /usr/bin/awk '{print $1}')"
 else
   LOCAL_SHA=""
 fi
 echo "  Local SHA:   ${LOCAL_SHA:-(no sha256sum/shasum available)}"
-EXPECTED_SHA="$(curl -fsSL --max-time 10 "$INTEGRITY_REPO_URL/labs/CHECKSUMS.txt" 2>/dev/null \
-  | awk -v p="$INTEGRITY_REL_PATH" '$2==p {print $1; exit}')"
-if [[ -z "$EXPECTED_SHA" ]]; then
-  echo "  Canonical:   (could not fetch — check network; compare manually at"
-  echo "                 $INTEGRITY_REPO_URL/labs/CHECKSUMS.txt )"
-elif [[ -z "$LOCAL_SHA" ]]; then
-  echo "  Canonical:   $EXPECTED_SHA"
-  echo "  INTEGRITY:   UNKNOWN — no SHA tool available to verify locally"
-elif [[ "$LOCAL_SHA" == "$EXPECTED_SHA" ]]; then
-  echo "  Canonical:   $EXPECTED_SHA"
-  echo "  INTEGRITY:   VERIFIED (matches canonical CHECKSUMS.txt)"
+CANONICAL_TXT=""
+[[ -x /usr/bin/curl ]] && CANONICAL_TXT="$(/usr/bin/curl -fsSL --max-time 10 "$INTEGRITY_REPO_URL/labs/CHECKSUMS.txt" 2>/dev/null)"
+if [[ -z "$CANONICAL_TXT" ]]; then
+  echo "  Canonical:   (could not fetch CHECKSUMS.txt — no network or curl missing)"
+  echo "  INTEGRITY:   UNKNOWN — fix the network and re-run; canonical is at"
+  echo "                 $INTEGRITY_REPO_URL/labs/CHECKSUMS.txt"
 else
-  echo "  Canonical:   $EXPECTED_SHA"
-  echo "  INTEGRITY:   *** MISMATCH *** — this check script differs from the canonical."
-  echo "               Re-fetch: curl -fsSLO $INTEGRITY_REPO_URL/$INTEGRITY_REL_PATH"
+  EXPECTED_SHA="$(printf '%s
+' "$CANONICAL_TXT" | /usr/bin/awk -v p="$INTEGRITY_REL_PATH" '$2==p {print $1; exit}')"
+  if [[ -z "$EXPECTED_SHA" ]]; then
+    echo "  Canonical:   (no matching line in CHECKSUMS.txt for $INTEGRITY_REL_PATH)"
+    echo "  INTEGRITY:   UNKNOWN — re-fetch this script:"
+    echo "                 curl -fsSLO $INTEGRITY_REPO_URL/$INTEGRITY_REL_PATH"
+  elif [[ -z "$LOCAL_SHA" ]]; then
+    echo "  Canonical:   $EXPECTED_SHA"
+    echo "  INTEGRITY:   UNKNOWN — no SHA tool available to verify locally"
+  elif [[ "$LOCAL_SHA" == "$EXPECTED_SHA" ]]; then
+    echo "  Canonical:   $EXPECTED_SHA"
+    echo "  INTEGRITY:   VERIFIED (matches canonical CHECKSUMS.txt)"
+  else
+    echo "  Canonical:   $EXPECTED_SHA"
+    echo "  INTEGRITY:   *** MISMATCH *** — this check script differs from the canonical."
+    echo "               Re-fetch: curl -fsSLO $INTEGRITY_REPO_URL/$INTEGRITY_REL_PATH"
+  fi
 fi
+PATH="$__SAVED_PATH"; unset __SAVED_PATH CANONICAL_TXT EXPECTED_SHA LOCAL_SHA
 echo
 
 # ---------------------------------------------------------------------------
