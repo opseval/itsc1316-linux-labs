@@ -27,23 +27,18 @@ By the end of this lab you will be able to:
 
 ## Start the Lab Environment
 
-If your VM is not already running, start it and open a shell from your computer's terminal:
+From your computer's terminal, **at the root of your cloned repo**, start the VM and transfer the two scripts in (do these *before* opening the VM shell — `multipass` doesn't exist inside the VM):
 
 ```
 multipass start labvm
-multipass shell labvm
-```
-
-Transfer the two scripts in (run these from your computer's terminal, from the **root of your cloned repo**, not inside the VM):
-
-```
 multipass transfer labs/module-06-users-and-permissions/setup-users.sh labvm:/home/ubuntu/
 multipass transfer labs/module-06-users-and-permissions/check-users.sh labvm:/home/ubuntu/
 ```
 
-Then, **inside the VM**, build the scenario:
+Now open a shell inside the VM and build the scenario:
 
 ```
+multipass shell labvm
 sudo bash setup-users.sh
 ```
 

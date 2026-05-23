@@ -14,9 +14,16 @@ no() { echo "  FAIL  $1"; fail=$((fail+1)); }
 echo "=== Module 13 Lab Check: Cloud Provisioning with cloud-init ==="
 echo
 
-# 1. cloud-init actually ran and finished
+# 1. cloud-init actually ran AND the user-data from cloud-init.yaml was
+#    applied. cloud-init status alone says "done" even for a stock Multipass
+#    launch with no --cloud-init flag, so we look for the marker file the
+#    lab's cloud-init.yaml writes to /etc/itsc1316-cloud-init-applied.
 if command -v cloud-init >/dev/null 2>&1 && cloud-init status 2>/dev/null | grep -qE 'done|disabled'; then
-  ok "cloud-init reports it finished"
+  if [[ -f /etc/itsc1316-cloud-init-applied ]]; then
+    ok "cloud-init reports it finished AND the ITSC-1316 user-data was applied"
+  else
+    no "cloud-init ran but the ITSC-1316 marker is missing — did you launch with '--cloud-init labs/module-13-cloud-computing/cloud-init.yaml'?"
+  fi
 else
   no "cloud-init did not finish cleanly (check: cloud-init status --long)"
 fi

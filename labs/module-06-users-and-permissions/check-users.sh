@@ -81,17 +81,23 @@ else
   no "generate_reports.sh is missing from /salesteam"
 fi
 
-# 4. The three quarterly .xls reports were produced (script was actually run).
-#    Check the exact filenames the script generates — not just any Q*-report
-#    glob — so manually-touched files like Qx-report.xls don't slip through.
-missing=()
+# 4. The three quarterly .xls reports were produced by the script — not just
+#    touched into existence. generate_reports.sh writes a line of the form
+#    "Sales report for QN - generated <date>" into each file; require that
+#    exact pattern so empty `touch`ed files don't pass.
+bad=()
 for q in Q1 Q2 Q3; do
-  [[ -f "/salesteam/${q}-report.xls" ]] || missing+=("${q}-report.xls")
+  f="/salesteam/${q}-report.xls"
+  if [[ ! -f "$f" ]]; then
+    bad+=("${q}-report.xls (missing)")
+  elif ! grep -q "^Sales report for ${q} - generated " "$f" 2>/dev/null; then
+    bad+=("${q}-report.xls (no script-generated content)")
+  fi
 done
-if (( ${#missing[@]} == 0 )); then
-  ok "Q1-report.xls, Q2-report.xls, Q3-report.xls all exist (script was executed)"
+if (( ${#bad[@]} == 0 )); then
+  ok "Q1/Q2/Q3 reports exist and contain script-generated content (script was actually run)"
 else
-  no "Missing in /salesteam: ${missing[*]} — did you actually run generate_reports.sh?"
+  no "Report problems: ${bad[*]} — run ./generate_reports.sh from inside /salesteam"
 fi
 
 echo

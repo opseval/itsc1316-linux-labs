@@ -38,9 +38,11 @@ print_summary() {
 cleanup() {
   echo
   echo ">> Cleaning up the throwaway VM..."
-  multipass delete "$VM" >/dev/null 2>&1 || true
-  multipass purge       >/dev/null 2>&1 || true
-  rm -f "$TMPFILE"      >/dev/null 2>&1 || true
+  # Use --purge to permanently remove ONLY this script's VM. A plain
+  # 'multipass purge' would also delete any OTHER instances the student
+  # had in the "deleted" pending-purge state — a real data-loss risk.
+  multipass delete --purge "$VM" >/dev/null 2>&1 || true
+  rm -f "$TMPFILE"               >/dev/null 2>&1 || true
   echo ">> Cleanup done."
   # Always show the summary block, even on early exit — students are told to
   # screenshot it for the Week 1 check-in, so it can't be skipped on failure.

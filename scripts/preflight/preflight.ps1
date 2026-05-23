@@ -27,8 +27,10 @@ function Note($m) { Write-Host "  [INFO] $m" }
 function Cleanup {
   Write-Host ""
   Write-Host ">> Cleaning up the throwaway VM..."
-  multipass delete $VM  2>$null | Out-Null
-  multipass purge       2>$null | Out-Null
+  # Use --purge to permanently remove ONLY this script's VM. A plain
+  # 'multipass purge' would also delete any OTHER instances the student
+  # had in the "deleted" pending-purge state - a real data-loss risk.
+  multipass delete --purge $VM 2>$null | Out-Null
   Remove-Item $TmpFile -ErrorAction SilentlyContinue
   Write-Host ">> Cleanup done."
 }
