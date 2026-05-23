@@ -12,9 +12,11 @@ Every lab grader is looking for the same three things on screen, in this exact o
 
 1. **`hostname`** — proves it's your VM.
 2. **`whoami`** — proves it's you running it.
-3. **`bash check-*.sh`** (or `sudo bash check-*.sh` if the lab says so) — runs to completion with a visible **"Passed: N  Failed: 0"** line and the **"ALL CHECKS PASSED"** banner.
+3. **`bash check-*.sh`** (or `sudo bash check-*.sh` if the lab says so) — runs to completion, prints its **`=== check script integrity ===`** block with a SHA256 visible on screen (the grader verifies this against [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt)), and ends with a **"Passed: N  Failed: 0"** line plus the **"ALL CHECKS PASSED"** banner.
 
 That sequence alone is enough to satisfy [Criterion 2](04-grading-rubric.md#criterion-2--screen-recording) of the rubric. Anything before / after is optional. **Webcam OFF; narration optional.**
+
+> **About the SHA256 line.** The check script prints its own SHA256 right after the title, so the grader can verify you didn't modify the script to hide a failed check. **Do not edit the check script.** If you did by accident, replace it from a fresh `git pull` (inside workstation: `cd ~/itsc1316-labs-yourname && git checkout labs/<lab-folder>/check-*.sh`). A mismatched SHA is graded as academic-integrity and scores the whole submission 0.
 
 > **Why "continuous take"?** A stitched recording could be assembled from multiple machines, multiple runs, or someone else's work. A single take with your live hostname is the simplest credible proof the work happened on your machine just now.
 

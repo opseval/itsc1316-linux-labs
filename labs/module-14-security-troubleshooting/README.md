@@ -140,7 +140,7 @@ VM hostname (run `hostname`):
 
 Submit **two things**:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-security.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-security.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **incident report** — this is where you state the root cause of the failed service and your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant to explain `find` flags or how to read `journalctl`, but the investigation, the evidence you cite, and the root-cause statement must be yours. Note anything you asked AI and what you confirmed on your own system. An AI can describe what `reportd` *might* fail from; only your VM's logs tell you what it *actually* failed from — cite the real log line.

@@ -23,6 +23,21 @@ NOTES="${LAB_HOME}/module2-access-notes.txt"
 echo "=== Module 2 Lab Check: Accessing a Linux System ==="
 echo
 
+# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+echo "=== check script integrity ==="
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+else
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      (no sha256sum or shasum available)"
+fi
+echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo
+
 if [[ $EUID -ne 0 ]]; then
   echo "  NOTE: not running as root. The password-status checks read"
   echo "        /etc/shadow and need sudo. Re-run with:  sudo bash check-access.sh"

@@ -46,23 +46,41 @@ You should see a version number. If you get "command not found," the install did
 
 ---
 
-## Part 2 — Launch Your Course VM
+## Part 2 — Launch Your Course VMs
 
-You will create one long-lived VM named **labvm** that you keep for the whole semester.
+This course runs on **two long-lived VMs** you keep for the whole semester:
+
+- **`labvm`** — where you run the lab `setup-*.sh` / `check-*.sh` scripts and do the exercises.
+- **`workstation`** — a small, pre-configured Ubuntu VM with `git`, `gh`, `ssh-keygen`, `scp`, `nano`, `vim`, etc., where you do every host-side task (so the experience is identical for everyone, regardless of laptop OS).
+
+### 2a. Launch `labvm`
 
 ```
 multipass launch 22.04 --name labvm --cpus 2 --memory 2G --disk 10G
 ```
 
-This downloads Ubuntu 22.04 LTS the first time (a few minutes) and boots it. When it finishes, confirm it is running:
+This downloads Ubuntu 22.04 LTS (the first time only — a few minutes) and boots it.
+
+### 2b. Launch `workstation`
+
+From the **root of your cloned repo** (so the cloud-init path resolves):
+
+```
+multipass launch 22.04 --name workstation --cpus 1 --memory 1G --disk 5G \
+    --cloud-init scripts/workstation/cloud-init.yaml
+```
+
+The `--cloud-init` flag tells Multipass to run a one-time first-boot setup that installs the dev tools. The full walk-through (first-boot config, `gh auth login`, cloning your fork, daily workflow, reaching `labvm` over SSH) lives in **[Workstation VM Guide](06-workstation-vm.md)**.
+
+### 2c. Confirm both are up
 
 ```
 multipass list
 ```
 
-You should see `labvm` with a state of `Running` and an IP address.
+You should see `labvm` and `workstation`, each `Running`, each with an IP address.
 
-> **Low on resources?** If your laptop struggles with 2 GB RAM, drop to `--memory 1G`. If your machine genuinely cannot run a VM, see **Part 6 — Cloud Fallback** below; you will not be penalized for hardware you do not have.
+> **Low on resources?** Drop labvm to `--memory 1G` if your laptop struggles with 2 GB. Workstation already sits at 1 GB. If your machine genuinely cannot run two VMs, see **Part 6 — Cloud Fallback** below; you will not be penalized for hardware you do not have.
 
 ---
 

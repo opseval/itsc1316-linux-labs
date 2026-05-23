@@ -206,7 +206,7 @@ you stop the runaway "datacruncher" from coming back after a reboot?>
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `sudo bash check-capstone.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `sudo bash check-capstone.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **handover report** (`~/module15-handover-report.txt`) — this is the written component, where your reasoning and evidence live, so the recording does not need narration.
 
 > **AI policy for this capstone: AI-OPEN — but read this first.** You may use an AI assistant to recall a flag or explain a command, and if you do, include a one-line note of what you asked and what you verified yourself. **But this lab is your integration practice for the cumulative final, and the entire value is in doing it yourself.** No AI can see your VM's actual `top` output, your real `du` numbers, or your live `systemctl` state — the evidence you put in the handover report must come from *your* machine. If you let an AI drive, you will not be ready for the final, where there is no AI and no check script. Treat this as the dress rehearsal.

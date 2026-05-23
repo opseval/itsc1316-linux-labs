@@ -179,7 +179,7 @@ Your storage report **is** the written component, and it is graded both by the c
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-storage.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-storage.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your **storage report** (`~/module5-storage-report.txt`) plus your answers to the two reflection questions. This is where your reasoning lives, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant to explain `df`, `du`, `find -size`, or `sort -h`, but include a one-line note of what you asked and what you verified yourself. An AI cannot see *your* VM's real `df` output or the exact size and path of the file the setup planted on *your* machine — those numbers, and the recommendation built on them, must come from your own investigation.

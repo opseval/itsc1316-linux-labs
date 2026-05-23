@@ -289,7 +289,7 @@ Your devices report **is** the written component. Beyond the file, answer these 
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-devices.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-devices.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your **devices report** (`~/module11-devices-report.txt`) plus your answers to the two reflection questions. This is where your reasoning lives, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant to explain `losetup`, `mkfs`, fstab fields, or `fsck` flags, but include a one-line note of what you asked and what you verified yourself. An AI cannot tell you *which* `/dev/loopN` your machine assigned, *which* UUID `blkid` printed for your practice disk, or what your real `lsblk` tree looks like — those, and the evidence in your report, must come from your own VM.

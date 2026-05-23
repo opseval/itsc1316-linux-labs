@@ -19,6 +19,21 @@ REPORT="${HOME}/module10-process-report.txt"
 echo "=== Module 10 Lab Check: Processes and System Resources ==="
 echo
 
+# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+echo "=== check script integrity ==="
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+else
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      (no sha256sum or shasum available)"
+fi
+echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo
+
 # ---------------------------------------------------------------------------
 # 1. The runaway CPU hog 'labhog-runaway' is no longer running. This is real
 #    system state: pgrep must find nothing matching it.

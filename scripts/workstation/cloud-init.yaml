@@ -1,0 +1,91 @@
+#cloud-config
+# =====================================================================
+# workstation cloud-init  -  ITSC-1316 student workstation VM
+# =====================================================================
+# A small, pre-configured Ubuntu VM where every student does the same
+# host-side work — generating SSH keys, configuring git, running `gh`,
+# editing files, cloning the course repo — regardless of whether their
+# laptop is macOS, Windows, or Linux. The only thing that lives on
+# their host machine is Multipass + a terminal.
+#
+# Launch from your computer's terminal (at the repo root):
+#   multipass launch 22.04 --name workstation --cpus 1 --memory 1G --disk 5G \
+#       --cloud-init scripts/workstation/cloud-init.yaml
+#
+# Then enter it:
+#   multipass shell workstation
+# =====================================================================
+
+# Keep the distro default user (ubuntu) — `multipass shell` lands there.
+users:
+  - default
+
+package_update: true
+
+# Standard dev/admin tools every lab assumes are available. Adding more
+# is cheap — but keep this list minimal so the install on first boot
+# stays fast.
+packages:
+  - git
+  - openssh-client
+  - nano
+  - vim
+  - curl
+  - wget
+  - jq
+  - less
+  - man-db
+  - bash-completion
+  - ca-certificates
+  - software-properties-common
+  - gnupg
+
+write_files:
+  # Marker file the workstation-setup check (and the GitHub primer) can
+  # use to verify cloud-init actually applied.
+  - path: /etc/itsc1316-workstation-applied
+    permissions: '0644'
+    content: |
+      ITSC-1316 workstation cloud-init applied on first boot.
+
+  # Welcome MOTD: prints when the student opens a shell into workstation.
+  - path: /etc/update-motd.d/99-itsc1316
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      cat <<'EOF'
+
+      =============================================================
+       ITSC-1316 Workstation VM
+      =============================================================
+       Pre-installed: git, gh, ssh, ssh-keygen, scp, nano, vim, curl
+
+       Suggested first steps (one time):
+         git config --global user.name "Your Name"
+         git config --global user.email "you@example.com"
+         gh auth login           # interactive browser flow
+         git clone <your-fork-url>
+
+       To reach a lab VM (labvm, fileserver, cloudvm):
+         1. Get its IP from your HOST terminal:  multipass list
+         2. ssh ubuntu@<that-ip>   (key must be authorized first;
+            see docs/06-workstation-vm.md for the bootstrap step)
+      =============================================================
+
+      EOF
+
+runcmd:
+  # GitHub CLI (gh) is in universe on jammy at an older version; install
+  # from the official Cli repo so students get a current release.
+  - mkdir -p -m 755 /etc/apt/keyrings
+  - wget -nv -O- https://cli.github.com/packages/githubcli-archive-keyring.gpg
+      | gpg --dearmor -o /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  - chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  - bash -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
+      > /etc/apt/sources.list.d/github-cli.list'
+  - apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y gh
+  # Drop the old static MOTDs so our one is what shows up.
+  - chmod -x /etc/update-motd.d/00-header /etc/update-motd.d/10-help-text 2>/dev/null || true
+
+final_message: "ITSC-1316 workstation ready in ${UPTIME} seconds. Enter it with: multipass shell workstation"

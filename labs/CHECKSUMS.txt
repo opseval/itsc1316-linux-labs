@@ -1,0 +1,30 @@
+# labs/CHECKSUMS.txt — SHA256 of every check-*.sh in this repo
+#
+# Each lab's check-*.sh prints its own SHA256 before running checks. The
+# grader compares that printed value against the line here. A mismatch
+# means the script was modified after release — automatic 0 on Criterion 4
+# (Submission Hygiene & Integrity); see docs/04-grading-rubric.md.
+#
+# Re-generate this file from the repo root with:
+#   ( cd "$(git rev-parse --show-toplevel)" && \
+#     find labs -name 'check-*.sh' -type f | sort | xargs sha256sum ) > labs/CHECKSUMS.txt
+#
+# The header lines (starting with '#') are preserved by editing the file
+# rather than overwriting it; if you re-generate from scratch, paste this
+# header back at the top.
+
+309de08cd16ee1a006281036c6c49d056d2600b16cd4541244a67771eaf193d9  labs/module-01-introduction-to-linux/check-intro.sh
+e305805f8b5fe6d2f64703dacf193b3feae363b07e08d34c6b44eab88071799a  labs/module-02-accessing-a-linux-system/check-access.sh
+093739b666d0d295bfcb199b32ad55a453b39e9f510a16f8ad2a3d2a982ba757  labs/module-03-shell-and-files/check-shell.sh
+64bbd1eddc7f0474968aa2fb04771eaa0a6538c488c8078d495009159bb20f6c  labs/module-04-filesystem-navigation/check-filesystem.sh
+7937c875f131bc12cd8250ae25390850fc52df8f5509291ef8ed79ac0fda07fd  labs/module-05-storage-monitoring/check-storage.sh
+701e1e29e1ef8f4dde84f061f54877c34b55a8da07197119168f367d2ee22952  labs/module-06-users-and-permissions/check-users.sh
+7a9df3d0ad3b3825d78048b38c01c5ce14187b21c528abfe1664b3e2c3bafb02  labs/module-07-software-and-archives/check-software.sh
+d23f144399d608b3e27778ace20f386074cb70e2af7eb8ce6bd05d784c5befce  labs/module-09-networking-fundamentals/check-netfund.sh
+36bc78b2cf94c1a197065eb36337417d66c24300f915ad4844919b91d4ef71c7  labs/module-10-processes-and-resources/check-processes.sh
+311b53c955a6ede2b0b10ff3791cfc0a4fceb884515d3e4654ee879069c33719  labs/module-11-devices-and-mounting/check-devices.sh
+d1dbe726f237155c5756197f064ee14038710b1d0554980e5c879046bb29cbe1  labs/module-12-systemd-services/check-systemd.sh
+ab64925e9a5aa452c094314ec3543221db8d99e5af3ae66ab94ad29c3ae61e38  labs/module-13-advanced-networking/check-net.sh
+390a4978ca253f167b45a81e4d562bd6c4894426d5779ae1b82c2b9e932a327b  labs/module-13-cloud-computing/check-cloud.sh
+0e66a3d261d0dab1f37bdd5c9b2ebe978ff977231420236669f93a8dc39b80fc  labs/module-14-security-troubleshooting/check-security.sh
+6b48733dde47ba3461bd290f94769473986d53e7bf54ec1be9e6f59c2cc71e76  labs/module-15-capstone/check-capstone.sh

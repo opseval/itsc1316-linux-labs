@@ -26,6 +26,21 @@ IMG="${USER_HOME}/loopdisk.img"
 echo "=== Module 11 Lab Check: Devices, Mounting & Persistence ==="
 echo
 
+# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+echo "=== check script integrity ==="
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+else
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      (no sha256sum or shasum available)"
+fi
+echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo
+
 # Warn (but don't fail) if not root — some checks may be incomplete.
 if [[ $EUID -ne 0 ]]; then
   echo "  NOTE  Not running as root. If blkid/fstab checks misbehave, re-run with: sudo bash check-devices.sh"

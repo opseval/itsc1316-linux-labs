@@ -236,7 +236,7 @@ VM hostname (run `hostname`):
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-filesystem.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-filesystem.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **written reflection** (the four answers above) — this is where you explain your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant what a directory is for or how `find` flags work — include a one-line note of what you asked and what you verified yourself (answer 4 above). An AI cannot see your VM: it does not know your machine's hostname, what is actually in *your* `/var/log`, or where *you* put the staged files. The checker reads your real directory tree and your real hostname out of your files, and the screencast shows them on your machine — that is how we know the work is yours.

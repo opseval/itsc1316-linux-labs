@@ -55,28 +55,33 @@ This creates two extra users — `devops1` and `devops2` — whose passwords are
 Fill in your real output/answers in `~/module2-access-notes.txt` as you go (`nano ~/module2-access-notes.txt`; save with Ctrl+O, exit with Ctrl+X).
 
 **1. Access the VM two different ways.**
-You're already in via the local Multipass shell — confirm it by running `who` and noting your session. Now you'll set up SSH access so you can log in like a remote admin. Multipass injects its *own* SSH key into the VM (which is what makes `multipass shell` work), but it does **not** trust your personal key — so a bare `ssh ubuntu@<ip>` will be refused. You have to add your public key to the VM first.
+You're already in `labvm` via the local Multipass shell — confirm it by running `who` and noting your session. Now you'll set up SSH access so you can log in like a remote admin from your **workstation VM**. Multipass injects its *own* SSH key into `labvm` (which is what makes `multipass shell` work), but it does **not** trust the workstation's key — so a bare `ssh ubuntu@labvm` from workstation will be refused. You have to authorize workstation's key on labvm first.
 
-From your computer's terminal (NOT inside the VM):
+If you haven't already done the one-time bootstrap from the [Workstation VM Guide](../../docs/06-workstation-vm.md#part-3--reaching-the-other-lab-vms-from-workstation), do it now (these two commands run on your **host computer's terminal**, not inside any VM — they need access to `multipass`):
 
 ```
-# Find labvm's IP:
-multipass list
-
-# If you don't already have an SSH key on your computer, generate one (just hit Enter at every prompt to accept defaults and no passphrase):
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
-
-# Push your PUBLIC key into labvm and append it to ubuntu's authorized_keys:
-multipass transfer ~/.ssh/id_ed25519.pub labvm:/tmp/mykey.pub
-multipass exec labvm -- bash -c 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat /tmp/mykey.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && rm /tmp/mykey.pub'
-
-# Now SSH in from your computer, in a second terminal window:
-ssh ubuntu@<that-ip>
+multipass transfer workstation:/home/ubuntu/.ssh/id_ed25519.pub labvm:/tmp/ws.pub
+multipass exec labvm -- bash -c \
+  'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat /tmp/ws.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && rm /tmp/ws.pub'
 ```
 
-Once connected over SSH, run `who` — you should see *two* sessions: the Multipass shell session AND a `pts/` line for SSH (something like `ubuntu  pts/0  ...  (10.x.x.x)`). Record the IP you connected to, and paste the `who` line that shows the SSH session.
+(If you've never generated `id_ed25519` inside workstation, do `multipass shell workstation` and run `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519` first, then come back and run the two host commands.)
 
-> **Why bother?** `multipass shell` is a special case — it's like sitting at the machine's console because Multipass owns the box. SSH is how you actually reach any real server, on any cloud, anywhere on the internet. The two pieces — generate a key, authorize it on the server, then connect — are the same on every Linux box you will ever administer, including the Module 13 cloud lab where you'll do this on a real cloud instance.
+Then, in a **second terminal on your computer**, enter workstation and SSH from there into labvm:
+
+```
+multipass shell workstation                # in the new terminal
+# inside workstation:
+multipass_labvm_ip=$(getent hosts labvm 2>/dev/null | awk '{print $1}')
+echo "labvm IP from workstation: ${multipass_labvm_ip:-<run 'multipass list' on host>}"
+ssh ubuntu@labvm                            # uses workstation's key — no password
+```
+
+> If `getent hosts labvm` returns nothing inside workstation, Multipass hasn't registered the name in workstation's DNS. Get labvm's IP from your **host** terminal (`multipass list`) and use the IP directly: `ssh ubuntu@10.x.x.x`.
+
+Once connected over SSH, run `who` on labvm — you should see *two* sessions: the original Multipass shell session AND a `pts/` line for the SSH session from workstation. Record the IP you connected to and paste the `who` line that shows the SSH session.
+
+> **Why bother?** `multipass shell` is a special case — it's like sitting at the machine's console because Multipass owns the box. SSH is how you actually reach any real server, on any cloud, anywhere on the internet. The three pieces — generate a key, authorize it on the server, then connect — are the same on every Linux box you will ever administer, including the Module 13 cloud lab where you do this on a real cloud instance.
 
 **2. Set passwords for the two new users.**
 The setup left `devops1` and `devops2` with locked passwords. Set each one:
@@ -165,7 +170,7 @@ Answer all three at the bottom of your notes, in your own words, a few sentences
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `sudo bash check-access.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `sudo bash check-access.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **`module2-access-notes.txt`**, including the written reflection — this is where your reasoning lives, so the recording does not need narration. (Copy it out with `multipass transfer labvm:/home/ubuntu/module2-access-notes.txt .` from your computer's terminal.)
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant how `ssh`, `passwd`, `su`, or `timedatectl` work — include a one-line note of what you asked and what you verified yourself. But an AI can't connect to *your* VM, can't see your real IP, can't set a password in your `/etc/shadow`, and can't read your clock's sync state. The check confirms those on the live system, so the work has to be yours.

@@ -34,20 +34,27 @@ When you click "launch instance" on AWS, GCP, Azure, or Oracle Cloud, there is a
 
 ## Part A — Create an SSH key (the cloud way to log in)
 
-Cloud servers do not use passwords; they use **key pairs**. You keep a private key secret on your computer; the server holds your public key. Generate a pair on **your computer** (skip if you already have one):
+Cloud servers do not use passwords; they use **key pairs**. You keep a private key secret on the machine you connect from; the server holds your public key. In this course, the machine you connect from is your **workstation VM** — that's where keys, git, and ssh all live.
+
+From your **host computer's terminal**, enter workstation:
+
+```
+multipass shell workstation
+```
+
+Then, inside workstation, generate the key (skip the `ssh-keygen` line if you already created `id_ed25519` for Module 2 — that same key works here):
 
 ```
 ssh-keygen -t ed25519 -C "itsc1316"
 ```
 
-Press Enter to accept the default location. Then print your **public** key:
+Press Enter at every prompt (accept the default path `~/.ssh/id_ed25519`, no passphrase). Then print your **public** key:
 
 ```
-cat ~/.ssh/id_ed25519.pub      # macOS/Linux/WSL
-# Windows PowerShell:  Get-Content $HOME\.ssh\id_ed25519.pub
+cat ~/.ssh/id_ed25519.pub
 ```
 
-Copy the entire line (it starts with `ssh-ed25519` and ends with your comment). You will paste it into the config next.
+Copy the entire line (it starts with `ssh-ed25519` and ends with your comment). You will paste it into `cloud-init.yaml` next.
 
 > **Never share or commit your *private* key** (`id_ed25519`, no `.pub`). The `.gitignore` in this repo blocks it, but stay aware. Only the `.pub` (public) key goes into configs.
 
@@ -125,13 +132,13 @@ This "throw it away and rebuild it from config" loop is itself a core cloud habi
 
 ## Part E — Connect with your SSH key (prove key auth works)
 
-Find the VM's IP (`multipass list`), then from your computer connect **as clouduser using your key** — no password:
+Find cloudvm's IP from your **host terminal**: `multipass list`. Then **inside workstation** (where your private key lives), connect to `cloudvm` as `clouduser` — no password:
 
 ```
 ssh -i ~/.ssh/id_ed25519 clouduser@<cloudvm-ip>
 ```
 
-If you land in a shell without being asked for a password, you have configured key-based authentication exactly like a real cloud login.
+(The first time, SSH asks "are you sure you want to continue connecting?" — answer `yes`.) If you land in a shell without being asked for a password, you have configured key-based authentication exactly like a real cloud login.
 
 ---
 
@@ -186,7 +193,7 @@ cloudvm hostname (run `hostname`):
 
 ## Submission Requirement
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `cloud-init status`, `curl http://localhost/` displaying YOUR personalized page, and `bash check-cloud.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `cloud-init status`, `curl http://localhost/` displaying YOUR personalized page, and `bash check-cloud.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **writeup** — this is where you explain what cloud-init did and why, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** AI is great for understanding cloud-init syntax — but your key, your name on the page, and your running server are yours. Note anything you asked AI and what you verified.

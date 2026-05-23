@@ -229,7 +229,7 @@ VM hostname (run `hostname`):
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-processes.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-processes.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **written component** (the three questions above). This is where you explain your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant to explain `ps`/`top` columns, signals, or niceness — include a one-line note of what you asked and what you verified yourself. An AI cannot see your VM: only you can watch *your* `top`, read *your* load average, find the real PID of the hog on *your* machine, and capture it into the report. The screencast and the report built from your real output are how you show the work is yours.

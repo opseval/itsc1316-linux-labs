@@ -1,12 +1,16 @@
 # GitHub & Git Primer (Get Your Own Copy of the Labs)
 
-**Do this once, in the first week, before any lab.** Every lab in this course lives on **GitHub** and runs out of *your* copy of the repo on your own computer. This guide walks you from "no GitHub account" to "I can clone, edit, commit, and push" in about 20 minutes. No prior git experience is assumed.
+**Do this once, in the first week, before any lab.** Every lab in this course lives on **GitHub** and runs out of *your* copy of the repo. This guide walks you from "no GitHub account" to "I can clone, edit, commit, and push" in about 20 minutes. No prior git experience is assumed.
+
+> **All of the git/gh/ssh work in this guide happens inside the [workstation VM](06-workstation-vm.md), not on your laptop's host OS.** That keeps the experience identical across macOS, Windows, and Linux. If you haven't set up workstation yet, do the [Workstation VM Guide](06-workstation-vm.md) first — it takes 5 minutes — and then come back here.
 
 > **Why GitHub?** GitHub is the standard place where source code lives — it's where you'll get the lab files, where your own work will be version-controlled, and (if you choose) where it becomes the portfolio piece you show employers. Every Linux/cloud/DevOps job in 2026 expects you to know basic git and GitHub. This is the on-ramp.
 
 ---
 
 ## Part 1 — Make a GitHub account
+
+You do this in your **laptop's browser**, not in workstation (workstation has no GUI).
 
 1. Go to <https://github.com/signup>.
 2. Use your **personal** email (one you'll keep after graduation), not your Alamo email — the account follows your career, not the school.
@@ -19,7 +23,7 @@
 
 ## Part 2 — Get your own copy of the labs (the "Use this template" button)
 
-The course repo is a **template** — you don't work in the shared one, you make your own copy. This way your commit history is *your* learning record.
+Still in your **laptop's browser**. The course repo is a **template** — you don't work in the shared one, you make your own copy. This way your commit history is *your* learning record.
 
 1. Open the course repo on GitHub (your instructor will give you the link).
 2. Click the green **"Use this template"** button at the top → **"Create a new repository."**
@@ -29,48 +33,19 @@ The course repo is a **template** — you don't work in the shared one, you make
     - **Public** — anyone with the link can see it. Pick this if you want it to become a portfolio piece (see [PORTFOLIO.md](../PORTFOLIO.md)).
 5. Click **Create repository**.
 
-You now have your own copy on GitHub. Next: get it onto your computer.
+You now have your own copy on GitHub. Next: get it onto workstation.
 
 ---
 
-## Part 3 — Install git on your computer
+## Part 3 — Configure git inside workstation (one time)
 
-Git is the command-line tool that talks to GitHub.
-
-### macOS
-
-Git ships with Xcode Command Line Tools. Run this once in **Terminal**:
+Open a workstation shell from your host terminal:
 
 ```
-xcode-select --install
+multipass shell workstation
 ```
 
-A dialog will pop up; click **Install** and wait a few minutes. Or, if you already use [Homebrew](https://brew.sh): `brew install git`.
-
-### Windows
-
-Download and run [Git for Windows](https://git-scm.com/download/win). Accept the defaults; the installer also gives you **Git Bash**, a Unix-style terminal you can use for these labs if you prefer. Use **PowerShell** or **Git Bash** as your terminal for the rest of the course.
-
-### Linux
-
-```
-sudo apt update && sudo apt install -y git    # Ubuntu / Debian / WSL
-sudo dnf install -y git                       # Fedora / RHEL / Rocky
-```
-
-### Verify
-
-```
-git --version
-```
-
-You should see something like `git version 2.45.x`. If you get "command not found", the install didn't complete.
-
----
-
-## Part 4 — Tell git who you are
-
-Git stamps every commit with your name and email. Do this **once**, with the same email you used on GitHub:
+Your prompt is now `ubuntu@workstation:~$`. Tell git who you are — with the **same email you used on GitHub**:
 
 ```
 git config --global user.name "Your Real Name"
@@ -79,36 +54,22 @@ git config --global init.defaultBranch main
 git config --global pull.rebase false
 ```
 
-(That last line picks a sensible default for `git pull` so you don't get prompted later.)
+(That last line picks a sensible default for `git pull` so you don't get prompted later.) Verify:
+
+```
+git --version
+git config --global --list | grep -E 'user\.|init\.|pull\.'
+```
+
+You should see your name, email, and the two extra defaults.
+
+> No install needed — `git` was pre-installed when workstation booted. Same goes for `gh`, `ssh`, `ssh-keygen`, `scp`, `nano`, `vim`, and `curl`. That's the whole reason workstation exists.
 
 ---
 
-## Part 5 — Install the GitHub CLI (`gh`) — recommended
+## Part 4 — Log in to the GitHub CLI inside workstation
 
-The `gh` CLI handles authentication and a lot of GitHub busywork (cloning over HTTPS without storing a password, creating PRs, etc.). It's optional but it makes everything smoother.
-
-### macOS
-
-```
-brew install gh
-```
-
-### Windows
-
-```
-winget install --id GitHub.cli
-```
-
-(or download the installer from <https://cli.github.com/>)
-
-### Linux
-
-```
-sudo apt update && sudo apt install -y gh     # Ubuntu / Debian / WSL
-sudo dnf install -y gh                        # Fedora / RHEL / Rocky
-```
-
-### Log in
+Still in your workstation shell:
 
 ```
 gh auth login
@@ -118,9 +79,11 @@ Pick:
 - **GitHub.com** (not GitHub Enterprise)
 - **HTTPS** (easier than SSH for now)
 - **Yes, authenticate Git with your GitHub credentials**
-- **Login with a web browser** — it will print a short code and open GitHub; paste the code, click Authorize.
+- **Login with a web browser**
 
-When it finishes, you're logged in. Verify:
+`gh` will print a short code and a URL. **The URL must open in your laptop's browser** (workstation has no graphical browser). Copy the code, paste it on the GitHub page, click Authorize. The CLI on workstation will detect that you completed login and finish.
+
+Verify:
 
 ```
 gh auth status
@@ -128,37 +91,30 @@ gh auth status
 
 ---
 
-## Part 6 — Clone your copy onto your computer
+## Part 5 — Clone your copy into workstation
 
-Open a terminal in the folder where you want your coursework to live (e.g. `~/workspace` on macOS/Linux, or `Documents\workspace` on Windows).
-
-### With `gh` (recommended)
+Still in workstation, in your home directory:
 
 ```
+cd ~
 gh repo clone YOUR-USERNAME/itsc1316-labs-yourname
 cd itsc1316-labs-yourname
-```
-
-### Without `gh` (plain git)
-
-```
-git clone https://github.com/YOUR-USERNAME/itsc1316-labs-yourname.git
-cd itsc1316-labs-yourname
-```
-
-Either way, you should now see all the lab folders:
-
-```
 ls labs/
 ```
 
-You're done with setup. Every lab from here on starts from this folder.
+You should see all the lab folders. The repo lives at `/home/ubuntu/itsc1316-labs-yourname/` inside workstation. Every later command in any lab that says "from the root of your cloned repo" means here.
+
+> **If you prefer plain git over `gh`** (e.g. you didn't run `gh auth login`), this works too:
+> ```
+> git clone https://github.com/YOUR-USERNAME/itsc1316-labs-yourname.git
+> ```
+> The first push will ask you to authenticate. `gh auth login` is the simpler path because it handles that for you.
 
 ---
 
-## Part 7 — The daily workflow
+## Part 6 — The daily workflow (inside workstation)
 
-This is the loop you'll run after every meaningful chunk of work — usually after each lab, sometimes after each significant step.
+This is the loop you'll run after every meaningful chunk of work — usually after each lab, sometimes after each significant step. **All four of these commands run inside workstation.**
 
 ```
 git status              # what changed?
@@ -194,19 +150,20 @@ git push
 
 ---
 
-## Part 8 — Things that bite people
+## Part 7 — Things that bite people
 
 - **Do not commit video files.** Zoom recordings are huge and GitHub rejects files over 100 MB. The repo's [`.gitignore`](../.gitignore) already blocks `*.mp4`, `*.mov`, `*.mkv`, etc.; if you want to share a recording, upload it to YouTube (unlisted) or Loom and paste the link in your submission instead.
 - **Do not commit private keys or passwords.** The `.gitignore` blocks `id_rsa`, `id_ed25519`, `*.pem`, etc., but check `git status` before every commit. If you accidentally commit a secret, **rotate it immediately** (generate a new key, change the password) — git history is forever, and "deleting" a file just hides it in older commits.
-- **Line endings on Windows.** Windows git defaults to converting LF → CRLF on checkout (CRLF in a shell script makes Linux fail with confusing "bad interpreter" or syntax errors). The repo ships a `.gitattributes` that forces LF for `*.sh`/`*.yaml`/`*.yml`, so cloning fresh on Windows produces correct files. If you already cloned with CRLF earlier, fix it once: `git config --global core.autocrlf input` then **renormalize** the working tree with `git add --renormalize . && git commit -m "normalize line endings"`. Or use VS Code for editing — it respects the repo's `.gitattributes` automatically.
+- **Line endings.** Working inside workstation (an Ubuntu VM) means LF everywhere — same as the labs expect. The repo also ships a `.gitattributes` that forces LF for `*.sh`/`*.yaml`, so even if you ever edit on a Windows host the files stay correct.
 - **"Permission denied (publickey)" on push.** You're using SSH but `gh auth login` set up HTTPS (or vice versa). Easiest fix: re-run `gh auth login` and pick HTTPS.
 - **You forgot to `cd` into the repo.** Every git command must run inside the cloned folder. `git status` outside a repo says "not a git repository."
+- **You confused workstation with labvm.** Workstation is for git/gh/editing/ssh. Labvm is for running `setup-*.sh` and `check-*.sh`. If `git status` complains and you're inside labvm by mistake, `exit` to get back to workstation.
 
 ---
 
-## Part 9 — Updating from the template (if the instructor changes a lab)
+## Part 8 — Updating from the template (if the instructor changes a lab)
 
-If the course repo gets a bug fix or a new lab after you've already cloned, you can pull the changes into your copy. This is optional and only needed if your instructor announces an update.
+If the course repo gets a bug fix or a new lab after you've already cloned, you can pull the changes into your copy. This is optional and only needed if your instructor announces an update. Run **inside workstation**:
 
 ```
 git remote add upstream https://github.com/INSTRUCTOR-OR-ORG/itsc1316-linux-labs.git
@@ -219,7 +176,7 @@ You only need the first line (`remote add upstream`) once. After that, just the 
 
 ---
 
-## Quick reference card
+## Quick reference card (all inside workstation)
 
 ```
 # Setup (once)
@@ -250,4 +207,4 @@ git diff --cached       # staged changes
 - **[Pro Git book](https://git-scm.com/book/en/v2)** — free, deep, the canonical reference.
 - **[GitHub Skills](https://skills.github.com/)** — short interactive courses inside GitHub itself.
 
-For these labs you only need Parts 1–7 above. The rest is here when you're curious.
+For these labs you only need Parts 1–6 above. The rest is here when you're curious.

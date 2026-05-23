@@ -199,7 +199,7 @@ labvm hostname (run `hostname`):
 
 ## Submission Requirement
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `multipass list` (or `ip a`), and `bash check-net.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `multipass list` (or `ip a`), and `bash check-net.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **troubleshooting writeup** — this is where you explain the difference between the IP test and the name test, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** AI is fine for understanding `ip route` output or `/etc/hosts` syntax, but the playbook and your evidence must come from your own two VMs. Note anything you asked AI and what you verified. An AI cannot know your `fileserver`'s real IP — only your `multipass list` can.

@@ -14,6 +14,21 @@ no() { echo "  FAIL  $1"; fail=$((fail+1)); }
 echo "=== Module 13 Lab Check: Cloud Provisioning with cloud-init ==="
 echo
 
+# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+echo "=== check script integrity ==="
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+else
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      (no sha256sum or shasum available)"
+fi
+echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo
+
 # 1. cloud-init actually ran AND the user-data from cloud-init.yaml was
 #    applied. cloud-init status alone says "done" even for a stock Multipass
 #    launch with no --cloud-init flag, so we look for the marker file the

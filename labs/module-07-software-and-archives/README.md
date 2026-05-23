@@ -243,7 +243,7 @@ VM hostname (run `hostname`):
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-software.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-software.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio.
 2. Your completed **written component** (the three questions above). This is where you explain your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may use an AI assistant to help you understand `apt`, `dpkg`, or `tar` flags — include a one-line note of anything you asked it and what you verified yourself. An AI cannot see your VM: only you can run `apt`/`tar` on *your* machine, produce *your* archive listing, and capture *your* hostname into the report. The screencast and the report built from your real output are how you show the work is yours.

@@ -31,6 +31,21 @@ REPORT="${REAL_HOME}/module12-systemd-report.txt"
 echo "=== Module 12 Lab Check: System Initialization & Services ==="
 echo
 
+# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+echo "=== check script integrity ==="
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+else
+  echo "  This script: $(basename "$0")"
+  echo "  SHA256:      (no sha256sum or shasum available)"
+fi
+echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo
+
 # ---------------------------------------------------------------------------
 # 1. The labhealth.service unit FILE exists and points at the lab's script.
 #    We require the real ExecStart so a student can't pass with an empty stub.

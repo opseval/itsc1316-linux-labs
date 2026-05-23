@@ -115,7 +115,7 @@ Real understanding shows up in *why*, not just *what*. Answer both in 2–3 sent
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional). It must show, in one continuous take: `hostname` and `whoami` (so we know it is your VM), then `bash check-users.sh` passing all checks. See Part 4 of the Multipass Setup Guide for the Zoom recording and submission steps (a **Zoom Cloud link is preferred**; keep your own `.mp4` copy for a possible portfolio).
+1. A **60–90 second screen recording** made per the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) (Alamo Zoom by default; one specific backup per OS if Zoom is broken) (webcam off; narration optional). It must show, in one continuous take: `hostname` and `whoami` (so we know it is your VM), then `bash check-users.sh` passing all checks. See the [Screen Recording Guide](../../docs/05-screen-recording-guide.md) for the recording and submission steps (a **Zoom Cloud link is preferred**; keep your own `.mp4` copy for a possible portfolio).
 2. Your **written answers** to the two reflection questions above (a few sentences each). This is where you explain your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may use an AI assistant to help you understand commands, but include a one-line note of anything you asked it and what you verified yourself. The screencast and reflection answers are how you demonstrate the work is yours.

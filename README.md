@@ -2,12 +2,13 @@
 
 Hands-on Linux labs that run on a free virtual machine on **your own computer** using [Canonical Multipass](https://multipass.run). You administer a real Linux system, prove your work with a self-grading script, and — if you choose — build a public portfolio that future employers can see.
 
-> **New here? Do these four things in order:**
-> 1. Run the **[Preflight Check](docs/00-preflight-check.md)** to confirm your computer can run the labs (week 1).
-> 2. Follow the **[GitHub & Git Primer](docs/03-github-primer.md)** to make a GitHub account and get your own copy of this repo onto your computer.
-> 3. Follow the **[Multipass Setup Guide](docs/01-multipass-setup-guide.md)** to build your course VM.
-> 4. Skim the **[Grading Rubric](docs/04-grading-rubric.md)** so you know exactly how every lab is scored — there are 4 criteria and 4 levels each, with no ambiguity.
-> 5. Start with the labs in [`labs/`](labs/), in module order.
+> **New here? Do these in order, in week 1:**
+> 1. **[Preflight Check](docs/00-preflight-check.md)** — confirms your computer can run the labs.
+> 2. **[Multipass Setup Guide](docs/01-multipass-setup-guide.md)** — installs Multipass and launches both course VMs (`labvm` and `workstation`).
+> 3. **[Workstation VM Guide](docs/06-workstation-vm.md)** — explains the two-VM model and finishes workstation's first-boot config (your repo and git auth live inside workstation, not on your host).
+> 4. **[GitHub & Git Primer](docs/03-github-primer.md)** — make a GitHub account, fork this template, clone it inside workstation.
+> 5. **[Grading Rubric](docs/04-grading-rubric.md)** — 4 criteria × 4 levels, explicit point values, no ambiguity.
+> 6. Start the labs in [`labs/`](labs/), in module order.
 >
 > **Two more guides you'll need within the first week:**
 > - **[Screen Recording Guide](docs/05-screen-recording-guide.md)** — Alamo Zoom (primary) + one specific backup per OS (QuickTime / Game Bar / OBS).
