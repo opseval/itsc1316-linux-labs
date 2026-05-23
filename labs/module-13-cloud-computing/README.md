@@ -36,14 +36,23 @@ When you click "launch instance" on AWS, GCP, Azure, or Oracle Cloud, there is a
 
 Cloud servers do not use passwords; they use **key pairs**. You keep a private key secret on the machine you connect from; the server holds your public key. In this lab the machine you connect from is your laptop's host OS (macOS, Linux, or Windows 10+ — all ship with `ssh-keygen` and `ssh`). If you already created `~/.ssh/id_ed25519` for Module 2, that same key works here — skip to Part B.
 
-**On your host computer's terminal:**
+**On your host computer's terminal** (skip the key-creation steps if you already made `~/.ssh/id_ed25519` for Module 2 — that same key works here):
+
+**macOS / Linux:**
 
 ```
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "itsc1316"
 ```
 
-(`-N ""` skips the passphrase prompt. The `mkdir` matters on a fresh account because `ssh-keygen` doesn't create `~/.ssh` for you. On PowerShell, `mkdir -p` works as an alias for `New-Item -ItemType Directory -Force`.) Then print your **public** key:
+**Windows (PowerShell):**
+
+```
+New-Item -ItemType Directory -Force -Path ~/.ssh | Out-Null
+ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519 -N '""' -C "itsc1316"
+```
+
+(Windows OpenSSH manages `~/.ssh` permissions via ACLs — no `chmod` needed. PowerShell's `mkdir` doesn't accept `-p`, so we use `New-Item -Force`. The passphrase is `'""'` because PowerShell's quoting strips a bare `""`.) Then print your **public** key:
 
 ```
 cat ~/.ssh/id_ed25519.pub

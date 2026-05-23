@@ -58,14 +58,23 @@ Fill in your real output/answers in `~/module2-access-notes.txt` as you go (`nan
 **1. Access the VM two different ways.**
 You're already in `labvm` via the local Multipass shell — confirm it by running `who` and noting your session. Now you'll set up SSH access so you can log in like a remote admin from a **second machine** — in this lab, that second machine is your own laptop's host OS (macOS, Linux, or Windows 10+, all of which ship with `ssh` and `ssh-keygen`). Multipass injects its *own* daemon key into `labvm` (which is what makes `multipass shell` work), but it does **not** trust your laptop's personal SSH key — so a bare `ssh ubuntu@<labvm-ip>` from your host will be refused. You have to authorize your laptop's public key on labvm first.
 
-**Step A — on your host computer's terminal, generate a key if you don't already have one:**
+**Step A — on your host computer's terminal, generate a key if you don't already have one** (skip this step entirely if `~/.ssh/id_ed25519.pub` already exists). `-N ""` skips the passphrase prompt, which is fine for a lab VM.
+
+**macOS / Linux:**
 
 ```
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
 ```
 
-(Skip both lines if `~/.ssh/id_ed25519.pub` already exists — that means you have one.) `-N ""` skips the passphrase prompt, which is fine for a lab VM. `ssh-keygen` won't create `~/.ssh` for you, so the `mkdir` matters on a fresh user account. On Windows PowerShell the same two commands work (`~/.ssh` expands to `C:\Users\you\.ssh`); use `New-Item -ItemType Directory -Force ~/.ssh` instead of `mkdir -p` if your shell doesn't support `-p`.
+**Windows (PowerShell):**
+
+```
+New-Item -ItemType Directory -Force -Path ~/.ssh | Out-Null
+ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519 -N '""'
+```
+
+(Windows OpenSSH manages `~/.ssh` permissions through ACLs automatically — no `chmod` equivalent is needed. PowerShell's `mkdir` is an alias for `New-Item` and does **not** accept `-p`, so we use `New-Item -Force` directly. The empty-string passphrase is passed as `'""'` because PowerShell's quoting rules strip a bare `""`.)
 
 **Step B — still on your host, push the public key into labvm and append it to authorized_keys:**
 

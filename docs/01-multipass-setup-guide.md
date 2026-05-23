@@ -72,23 +72,23 @@ You should see `labvm` as `Running` with an IPv4 address.
 
 Skip this entirely if you're not planning to do the [PORTFOLIO.md](../PORTFOLIO.md) track. The labs themselves do **not** require a workstation VM — every lab fetches its scripts straight from this public repo into `labvm` with `curl`.
 
-If you *are* doing the portfolio track (recommended but optional), launch a second small VM where `git`, `gh`, `ssh-keygen`, `scp`, `nano`, etc. are pre-installed so the git/SSH experience is identical regardless of your laptop's OS. Recent Multipass versions accept an HTTPS URL for `--cloud-init`, so a single line works on every shell (bash, zsh, PowerShell):
+If you *are* doing the portfolio track (recommended but optional), launch a second small VM where `git`, `gh`, `ssh-keygen`, `scp`, `nano`, etc. are pre-installed so the git/SSH experience is identical regardless of your laptop's OS. Fetch the cloud-init file first, then point Multipass at the local copy — that form works on every Multipass version and every shell:
+
+**macOS / Linux:**
 
 ```
-multipass launch 22.04 --name workstation --cpus 1 --memory 1G --disk 5G --cloud-init https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/scripts/workstation/cloud-init.yaml
-```
-
-If your Multipass build is older and refuses the URL, fetch the file first and feed it from disk:
-
-```
-# macOS / Linux:
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/scripts/workstation/cloud-init.yaml
 multipass launch 22.04 --name workstation --cpus 1 --memory 1G --disk 5G --cloud-init ./cloud-init.yaml
+```
 
-# Windows PowerShell (note `curl.exe`, not `curl` — the bare word is an alias for Invoke-WebRequest, which doesn't speak `-fsSLO`):
+**Windows (PowerShell)** — use `curl.exe`, not `curl`; the bare word is an alias for Invoke-WebRequest, which doesn't speak `-fsSLO`:
+
+```
 curl.exe -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/scripts/workstation/cloud-init.yaml
 multipass launch 22.04 --name workstation --cpus 1 --memory 1G --disk 5G --cloud-init ./cloud-init.yaml
 ```
+
+> Newer Multipass builds (1.13+) also accept an HTTPS URL passed directly to `--cloud-init` (so you can skip the curl step), but the two-step form above is the only one guaranteed to work on every build that's currently in the wild — and it leaves the YAML on disk so you can inspect or re-launch from it.
 
 The full walk-through (first-boot config, `gh auth login`, cloning your fork, daily git workflow, reaching `labvm` over SSH) lives in **[Workstation VM Guide](06-workstation-vm.md)**.
 
