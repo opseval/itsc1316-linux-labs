@@ -15,7 +15,11 @@
 # =====================================================================
 
 # --- Create a login user the cloud way: no password, SSH key only ---
+# The leading "- default" keeps the distro's default user (ubuntu on Multipass)
+# alongside clouduser. Without it, the users: list REPLACES the default and
+# 'multipass shell cloudvm' (which lands as ubuntu) breaks.
 users:
+  - default
   - name: clouduser
     groups: [sudo]
     shell: /bin/bash
