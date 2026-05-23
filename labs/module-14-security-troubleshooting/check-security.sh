@@ -38,7 +38,10 @@ fi
 #    must be zero (mode 600 or 400 is correct; anything else fails).
 if [[ -f /opt/payroll/salaries.csv ]]; then
   m=$(mode /opt/payroll/salaries.csv)
-  perms="${m: -3}"
+  # Zero-pad — `stat -c '%a'` strips leading zeros, so a mode like 040 prints
+  # as '40' and would leave the digit slices below empty.
+  m_padded=$(printf '%03d' "$m")
+  perms="${m_padded: -3}"
   group_digit="${perms:1:1}"
   other_digit="${perms:2:1}"
   if (( (other_digit & 6) == 0 && (group_digit & 6) == 0 )); then

@@ -29,9 +29,10 @@ else
   no "/salesteam should be owned by ubuntu:salesteam (found $(owner /salesteam):$(group /salesteam))"
 fi
 
-# 2. meeting-highlights.txt exists, has mode 660, AND is group-owned by salesteam
-#    (mode alone is not enough — if the group isn't salesteam, teammates can't use it)
-if [[ -f /salesteam/meeting-highlights.txt ]]; then
+# 2. meeting-highlights.txt exists, is non-empty, has mode 660, AND is group-owned
+#    by salesteam (mode alone isn't enough — if the group isn't salesteam, teammates
+#    can't use it; and the lab specifically asks students to put a line in the file).
+if [[ -s /salesteam/meeting-highlights.txt ]]; then
   m=$(mode /salesteam/meeting-highlights.txt)
   g=$(group /salesteam/meeting-highlights.txt)
   if [[ "$m" == "660" && "$g" == "salesteam" ]]; then
@@ -41,6 +42,8 @@ if [[ -f /salesteam/meeting-highlights.txt ]]; then
   else
     no "meeting-highlights.txt has mode 660 but is group '$g', not 'salesteam' — the team can't access it"
   fi
+elif [[ -f /salesteam/meeting-highlights.txt ]]; then
+  no "meeting-highlights.txt exists but is empty — the lab asks you to put a line of text in it"
 else
   no "meeting-highlights.txt does not exist in /salesteam"
 fi
@@ -52,8 +55,11 @@ if [[ -f /salesteam/generate_reports.sh ]]; then
   m=$(mode /salesteam/generate_reports.sh)
   o_user=$(owner /salesteam/generate_reports.sh)
   o_group=$(group /salesteam/generate_reports.sh)
-  # Take the last three octal digits (handles a leading special-bit digit).
-  perms="${m: -3}"
+  # Zero-pad to at least 3 digits — `stat -c '%a'` strips leading zeros
+  # (mode 040 prints as '40'), which would leave the digit slices below empty
+  # and crash the arithmetic.
+  m_padded=$(printf '%03d' "$m")
+  perms="${m_padded: -3}"
   o="${perms:0:1}"   # owner digit
   g="${perms:1:1}"   # group digit
   t="${perms:2:1}"   # other digit
