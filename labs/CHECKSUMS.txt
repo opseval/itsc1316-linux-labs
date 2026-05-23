@@ -1,8 +1,13 @@
 # labs/CHECKSUMS.txt — SHA256 of every check-*.sh in this repo
 #
-# Each lab's check-*.sh prints its own SHA256 before running checks. The
-# grader compares that printed value against the line here. A mismatch
-# means the script was modified after release — automatic 0 on Criterion 4
+# Each lab's check-*.sh script auto-fetches THIS file from
+#   https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/CHECKSUMS.txt
+# and compares the script's local SHA256 against the canonical line below.
+# At run time the script prints one of:
+#   INTEGRITY: VERIFIED  — local SHA matches canonical; script is untampered
+#   INTEGRITY: MISMATCH  — local SHA differs; the script was modified after release
+#   INTEGRITY: UNKNOWN   — no sha256sum/shasum tool, or canonical fetch failed
+# A MISMATCH on the recording is an automatic 0 on Criterion 4
 # (Submission Hygiene & Integrity); see docs/04-grading-rubric.md.
 #
 # Re-generate this file from the repo root with:
@@ -13,18 +18,18 @@
 # rather than overwriting it; if you re-generate from scratch, paste this
 # header back at the top.
 
-309de08cd16ee1a006281036c6c49d056d2600b16cd4541244a67771eaf193d9  labs/module-01-introduction-to-linux/check-intro.sh
-e305805f8b5fe6d2f64703dacf193b3feae363b07e08d34c6b44eab88071799a  labs/module-02-accessing-a-linux-system/check-access.sh
-093739b666d0d295bfcb199b32ad55a453b39e9f510a16f8ad2a3d2a982ba757  labs/module-03-shell-and-files/check-shell.sh
-64bbd1eddc7f0474968aa2fb04771eaa0a6538c488c8078d495009159bb20f6c  labs/module-04-filesystem-navigation/check-filesystem.sh
-7937c875f131bc12cd8250ae25390850fc52df8f5509291ef8ed79ac0fda07fd  labs/module-05-storage-monitoring/check-storage.sh
-701e1e29e1ef8f4dde84f061f54877c34b55a8da07197119168f367d2ee22952  labs/module-06-users-and-permissions/check-users.sh
-7a9df3d0ad3b3825d78048b38c01c5ce14187b21c528abfe1664b3e2c3bafb02  labs/module-07-software-and-archives/check-software.sh
-d23f144399d608b3e27778ace20f386074cb70e2af7eb8ce6bd05d784c5befce  labs/module-09-networking-fundamentals/check-netfund.sh
-36bc78b2cf94c1a197065eb36337417d66c24300f915ad4844919b91d4ef71c7  labs/module-10-processes-and-resources/check-processes.sh
-311b53c955a6ede2b0b10ff3791cfc0a4fceb884515d3e4654ee879069c33719  labs/module-11-devices-and-mounting/check-devices.sh
-d1dbe726f237155c5756197f064ee14038710b1d0554980e5c879046bb29cbe1  labs/module-12-systemd-services/check-systemd.sh
-ab64925e9a5aa452c094314ec3543221db8d99e5af3ae66ab94ad29c3ae61e38  labs/module-13-advanced-networking/check-net.sh
-390a4978ca253f167b45a81e4d562bd6c4894426d5779ae1b82c2b9e932a327b  labs/module-13-cloud-computing/check-cloud.sh
-0e66a3d261d0dab1f37bdd5c9b2ebe978ff977231420236669f93a8dc39b80fc  labs/module-14-security-troubleshooting/check-security.sh
-6b48733dde47ba3461bd290f94769473986d53e7bf54ec1be9e6f59c2cc71e76  labs/module-15-capstone/check-capstone.sh
+a31af10cacc859ccd4720a7034095b158da1c09946ec850add7b51cf003c84e7  labs/module-01-introduction-to-linux/check-intro.sh
+43f33e5a64344272f5e53296b72a9581fbca4d074d1a7a8b519759035ada34d9  labs/module-02-accessing-a-linux-system/check-access.sh
+2641c63f7bb35e8d1206bd57ce4669bdb3f29fef6c27caec8743473127167720  labs/module-03-shell-and-files/check-shell.sh
+3fe5d21e7da19ec029396bbf53a031447881d3d8acb5faf5cd062f1c931dea2f  labs/module-04-filesystem-navigation/check-filesystem.sh
+a700926871f1b5312918ba9ddc76cbf3a5118e50c77b5e530a321a5dceccd394  labs/module-05-storage-monitoring/check-storage.sh
+4f56cedb2c5c4ac297e85d6caa3e67ecf8713910e15c52e9c40dee93317cfbc8  labs/module-06-users-and-permissions/check-users.sh
+597eeab9ad8152a619cdeb8f993c8daf2a5d81f90d9e3cafb152a1a07ee0d706  labs/module-07-software-and-archives/check-software.sh
+fc6fd0ac6ee526e3d8293a823f2b9775faac787fd164f457024f97ea07d9b601  labs/module-09-networking-fundamentals/check-netfund.sh
+661e1260acf09359f91ce73abb0e3357459a460fe24cacef1786283dc55b8db3  labs/module-10-processes-and-resources/check-processes.sh
+7a8192acefd8797516d048f9b04e08619e913c755df46429f25659aff2e7cf79  labs/module-11-devices-and-mounting/check-devices.sh
+edd4da6da595c86d50ceae116e412e3e3cf34312d6e550b3f03686c2e9c7345b  labs/module-12-systemd-services/check-systemd.sh
+810c60f04b80ad0d1ba6d818826cdccf54279ecceb17847faaf809ce3884d1b8  labs/module-13-advanced-networking/check-net.sh
+050faf1b7435d1248f914267a5b1e06513b959020478e31b681f1d91fdaba08b  labs/module-13-cloud-computing/check-cloud.sh
+93a72caada304e4c1656219fefe4bf07c539bf3375d69ece50a71194b2b1aff1  labs/module-14-security-troubleshooting/check-security.sh
+60a7dc641edda7d51cdc9f9e2745f95870327d80805644b3269bd17a7186f838  labs/module-15-capstone/check-capstone.sh

@@ -12,21 +12,19 @@ Every lab grader is looking for the same three things on screen, in this exact o
 
 1. **`hostname`** — proves it's your VM.
 2. **`whoami`** — proves it's you running it.
-3. **`bash check-*.sh`** (or `sudo bash check-*.sh` if the lab says so) — runs to completion, prints its **`=== check script integrity ===`** block with a SHA256 visible on screen (the grader verifies this against [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt)), and ends with a **"Passed: N  Failed: 0"** line plus the **"ALL CHECKS PASSED"** banner.
+3. **`bash check-*.sh`** (or `sudo bash check-*.sh` if the lab says so) — runs to completion, prints its **`=== check script integrity ===`** block (the script auto-fetches [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) from GitHub and self-verifies; the grader looks for the **`INTEGRITY: VERIFIED`** line at the top), and ends with a **"Passed: N  Failed: 0"** line plus the **"ALL CHECKS PASSED"** banner.
 
 That sequence alone is enough to satisfy [Criterion 2](04-grading-rubric.md#criterion-2--screen-recording) of the rubric. Anything before / after is optional. **Webcam OFF; narration optional.**
 
-> **About the SHA256 line.** The check script prints its own SHA256 right after the title, so the grader can verify you didn't modify the script to hide a failed check. **Do not edit the check script.** If you did by accident, replace it inside `labvm` with a fresh copy from the canonical URL — for example, for the Module 6 check script:
+> **About the integrity line.** The check script auto-fetches `labs/CHECKSUMS.txt` from the canonical GitHub raw URL, compares it against the script's own SHA256, and prints one of three results: `INTEGRITY: VERIFIED` (good), `INTEGRITY: *** MISMATCH ***` (you edited the script — academic-integrity 0), or `INTEGRITY: UNKNOWN` (the VM couldn't reach GitHub, or no SHA tool — fix and re-record). **Do not edit the check script.** If you did by accident, replace it with a fresh copy — for example, for the Module 6 check script:
 >
 > ```
 > rm check-users.sh
 > curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-06-users-and-permissions/check-users.sh
-> sha256sum check-users.sh
-> # compare the printed SHA against the matching line in:
-> # https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/CHECKSUMS.txt
+> bash check-users.sh   # the integrity block at the top should now read VERIFIED
 > ```
 >
-> (You can also `curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/CHECKSUMS.txt && grep check-users.sh CHECKSUMS.txt` to do the comparison inside labvm. Use the right path/filename for the lab you're on; each per-lab README shows the exact URL.) A mismatched SHA is graded as academic-integrity and scores the whole submission 0.
+> (Use the right path/filename for the lab you're on; each per-lab README shows the exact URL.) A `MISMATCH` recorded on the submission scores the whole thing 0.
 
 > **Why "continuous take"?** A stitched recording could be assembled from multiple machines, multiple runs, or someone else's work. A single take with your live hostname is the simplest credible proof the work happened on your machine just now.
 

@@ -29,21 +29,22 @@ Total possible: **36 / 36**. The Written Component is the biggest single criteri
 
 **Max: 9 points.** What the grader runs: opens your screen recording and counts the `FAIL` lines in the `check-*.sh` output.
 
-**Grader's first step — verify the check script wasn't modified.** Every check script prints its own SHA256 as the first block of output:
+**Grader's first step — verify the check script wasn't modified.** Every check script auto-fetches [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) from GitHub and prints a self-verification block as the first output:
 ```
 === check script integrity ===
-  This script: check-XX.sh
-  SHA256:      <hex>
-  Expected:    see labs/CHECKSUMS.txt in the repo
+  Script:      check-XX.sh
+  Local SHA:   <hex>
+  Canonical:   <hex>
+  INTEGRITY:   VERIFIED (matches canonical CHECKSUMS.txt)
 ```
-The grader compares the printed SHA256 against [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt). If the values don't match, the student edited the check script — this is an academic-integrity violation and the entire submission is graded **0** under [Criterion 4](#criterion-4--submission-hygiene--integrity), regardless of how the rest looks.
+The grader looks at the **INTEGRITY:** line. `VERIFIED` means the script is untampered. `*** MISMATCH ***` means the student edited the check script — this is an academic-integrity violation and the entire submission is graded **0** under [Criterion 4](#criterion-4--submission-hygiene--integrity), regardless of how the rest looks. `UNKNOWN` (e.g., the canonical fetch failed because the VM was offline) is treated as a re-record-and-resubmit, not a violation — the grader will ask the student to re-run with network so VERIFIED can be confirmed.
 
 | Points | Standard (objective — count the FAILs) |
 | --- | --- |
-| **9** | The check script ran to completion, its SHA256 matches `labs/CHECKSUMS.txt`, and **every check is PASS** (zero FAIL lines). |
-| **6** | SHA matches; one single FAIL line, **everything else PASS**. (Near-complete.) |
-| **3** | SHA matches; two or more FAILs, but at least one PASS. (Substantial attempt.) |
-| **0** | The check script wasn't run, the recording doesn't show its output, or every check FAILed. (If the SHA doesn't match, see the academic-integrity note above — Criterion 4 forces the whole submission to 0.) |
+| **9** | The check script ran to completion, the recording shows `INTEGRITY: VERIFIED`, and **every check is PASS** (zero FAIL lines). |
+| **6** | `INTEGRITY: VERIFIED`; one single FAIL line, **everything else PASS**. (Near-complete.) |
+| **3** | `INTEGRITY: VERIFIED`; two or more FAILs, but at least one PASS. (Substantial attempt.) |
+| **0** | The check script wasn't run, the recording doesn't show its output, or every check FAILed. (If the recording shows `INTEGRITY: *** MISMATCH ***`, see the academic-integrity note above — Criterion 4 forces the whole submission to 0.) |
 
 ---
 
@@ -96,7 +97,7 @@ Each lab's README spells out its specific written deliverable; this criterion gr
 | **9** | All required artifacts (recording + written component, per the lab's "Submission Requirement" block) are attached; if the lab is **AI-OPEN** or **AI-REQUIRED**, a one-line AI-use disclosure is included; submission is on time. |
 | **6** | All artifacts attached, **but** missing the AI disclosure (when required), OR submitted late but within the lab's stated grace window. |
 | **3** | One required artifact is missing (e.g. the writeup was submitted but no recording was attached). |
-| **0** | More than one artifact is missing, **OR** there is evidence of an academic-integrity violation — the recording shows a different machine than the writeup describes, the hostname in the report doesn't match the one in the recording, identical text was submitted by multiple students, the recording was reused from another semester, **or the SHA256 printed by the check script in the recording does not match [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) (the student edited the check script)**. Academic-integrity violations are **always a 0**; they do not partial-credit. |
+| **0** | More than one artifact is missing, **OR** there is evidence of an academic-integrity violation — the recording shows a different machine than the writeup describes, the hostname in the report doesn't match the one in the recording, identical text was submitted by multiple students, the recording was reused from another semester, **or the check script's integrity line in the recording shows `INTEGRITY: *** MISMATCH ***` against [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) (the student edited the check script)**. Academic-integrity violations are **always a 0**; they do not partial-credit. |
 
 > **AI disclosure expectation, in one line:** "Used <tool> to <ask what>; verified <how> on my own VM." That's the whole bar. The check scripts make most AI shortcuts visible anyway (the hostname / kernel / IP cannot be faked), but the disclosure is what the academic-integrity scoring relies on. If the lab is **AI-FREE**, no disclosure is needed (and AI use is itself the violation).
 
@@ -120,7 +121,7 @@ Total possible: **45 / 45**. Level definitions are identical to the standard lab
 ## Worked example — Module 6 submission
 
 A student submits:
-- A Zoom Cloud link, 78 seconds, continuous take, shows `hostname` → `whoami` → `bash check-users.sh`. The check script's SHA256 integrity block is visible at the top of the output and matches `labs/CHECKSUMS.txt`. The run ends in `Passed: 4  Failed: 0`.
+- A Zoom Cloud link, 78 seconds, continuous take, shows `hostname` → `whoami` → `bash check-users.sh`. The check script's integrity block is visible at the top of the output and reads `INTEGRITY: VERIFIED`. The run ends in `Passed: 4  Failed: 0`.
 - A text file with both reflection questions answered, ~3 sentences each, no `<...>` placeholders, references `avery` by name.
 - Attached on Canvas before the deadline.
 - The lab is AI-OPEN; the student included: "Asked Claude to explain the difference between 660 and 640 for the file mode; verified by running `sudo su - avery` and trying to edit `meeting-highlights.txt` myself."
@@ -139,8 +140,8 @@ Total: 9 + 6 + 12 + 9 = **36 / 36**.
 
 Run through these in order; if you can't say "yes" to all, fix the gap first:
 
-- [ ] **Crit 1 (9 pts).** I just ran `bash check-*.sh` (or `sudo bash check-*.sh` if the lab says so) and saw **0 FAILs** — AND the SHA256 the script printed at the top matches the line in `labs/CHECKSUMS.txt`. (If you edited the check script, even by accident, refetch it fresh — `rm check-*.sh && curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/<lab>/check-<name>.sh` — a mismatched SHA is graded as academic-integrity, not a partial-credit issue. See [docs/05-screen-recording-guide.md](05-screen-recording-guide.md) for the full recipe.)
-- [ ] **Crit 2 (6 pts).** My recording is a single continuous take. In it you can see the SHA integrity block, `hostname`, `whoami`, and the check ending in PASS — all without me pausing or editing.
+- [ ] **Crit 1 (9 pts).** I just ran `bash check-*.sh` (or `sudo bash check-*.sh` if the lab says so) and saw **0 FAILs** — AND the integrity line at the top reads `INTEGRITY: VERIFIED`. (If it reads `MISMATCH`, you edited the check script — refetch it fresh: `rm check-*.sh && curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/<lab>/check-<name>.sh` — a `MISMATCH` is graded as academic-integrity, not a partial-credit issue. If it reads `UNKNOWN`, your VM couldn't reach GitHub; re-run after fixing the network so the line reads `VERIFIED`. See [docs/05-screen-recording-guide.md](05-screen-recording-guide.md) for the full recipe.)
+- [ ] **Crit 2 (6 pts).** My recording is a single continuous take. In it you can see the integrity block (reading `VERIFIED`), `hostname`, `whoami`, and the check ending in PASS — all without me pausing or editing.
 - [ ] **Crit 3 (12 pts).** My written file has every section the lab asked for, zero `<...>` placeholders, and at least one reference to my own VM's specific output (hostname, IP, file path, etc.).
 - [ ] **Crit 4 (9 pts).** I attached both the recording (or link) and the written file. If AI was permitted and I used it, I added the one-line disclosure.
 

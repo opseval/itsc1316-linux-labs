@@ -23,19 +23,35 @@ NOTES="${LAB_HOME}/module2-access-notes.txt"
 echo "=== Module 2 Lab Check: Accessing a Linux System ==="
 echo
 
-# --- Integrity self-check (the grader will verify this SHA against labs/CHECKSUMS.txt) ---
+# --- Integrity self-check (auto-compares against canonical CHECKSUMS.txt on GitHub) ---
 echo "=== check script integrity ==="
+INTEGRITY_REL_PATH="labs/module-02-accessing-a-linux-system/check-access.sh"
+INTEGRITY_REPO_URL="https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main"
+echo "  Script:      $(basename "$0")"
 if command -v sha256sum >/dev/null 2>&1; then
-  echo "  This script: $(basename "$0")"
-  echo "  SHA256:      $(sha256sum "$0" | awk '{print $1}')"
+  LOCAL_SHA="$(sha256sum "$0" | awk '{print $1}')"
 elif command -v shasum >/dev/null 2>&1; then
-  echo "  This script: $(basename "$0")"
-  echo "  SHA256:      $(shasum -a 256 "$0" | awk '{print $1}')"
+  LOCAL_SHA="$(shasum -a 256 "$0" | awk '{print $1}')"
 else
-  echo "  This script: $(basename "$0")"
-  echo "  SHA256:      (no sha256sum or shasum available)"
+  LOCAL_SHA=""
 fi
-echo "  Expected:    see labs/CHECKSUMS.txt in the repo"
+echo "  Local SHA:   ${LOCAL_SHA:-(no sha256sum/shasum available)}"
+EXPECTED_SHA="$(curl -fsSL --max-time 10 "$INTEGRITY_REPO_URL/labs/CHECKSUMS.txt" 2>/dev/null \
+  | awk -v p="$INTEGRITY_REL_PATH" '$2==p {print $1; exit}')"
+if [[ -z "$EXPECTED_SHA" ]]; then
+  echo "  Canonical:   (could not fetch — check network; compare manually at"
+  echo "                 $INTEGRITY_REPO_URL/labs/CHECKSUMS.txt )"
+elif [[ -z "$LOCAL_SHA" ]]; then
+  echo "  Canonical:   $EXPECTED_SHA"
+  echo "  INTEGRITY:   UNKNOWN — no SHA tool available to verify locally"
+elif [[ "$LOCAL_SHA" == "$EXPECTED_SHA" ]]; then
+  echo "  Canonical:   $EXPECTED_SHA"
+  echo "  INTEGRITY:   VERIFIED (matches canonical CHECKSUMS.txt)"
+else
+  echo "  Canonical:   $EXPECTED_SHA"
+  echo "  INTEGRITY:   *** MISMATCH *** — this check script differs from the canonical."
+  echo "               Re-fetch: curl -fsSLO $INTEGRITY_REPO_URL/$INTEGRITY_REL_PATH"
+fi
 echo
 
 if [[ $EUID -ne 0 ]]; then

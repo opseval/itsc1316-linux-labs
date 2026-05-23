@@ -45,7 +45,7 @@ bash check-<name>.sh                         # or 'sudo bash check-*.sh' per the
 
 > Each per-lab README gives the exact `curl` URLs and the exact `setup`/`check` commands for that lab. Follow those — the boilerplate above is just the shape.
 
-> **Why `curl` instead of cloning?** It works the same on macOS, Windows, and Linux — all the work happens *inside* Ubuntu (`labvm`), which has `curl` pre-installed. Nothing to configure on your host. Every check script also prints its own SHA256 so you (and the grader) can verify it hasn't been tampered with against [`labs/CHECKSUMS.txt`](labs/CHECKSUMS.txt).
+> **Why `curl` instead of cloning?** It works the same on macOS, Windows, and Linux — all the work happens *inside* Ubuntu (`labvm`), which has `curl` pre-installed. Nothing to configure on your host. Every check script also auto-fetches [`labs/CHECKSUMS.txt`](labs/CHECKSUMS.txt) from the canonical raw URL and self-verifies — it prints `INTEGRITY: VERIFIED` at the top so you (and the grader) know in one glance whether the script has been tampered with.
 
 Then record a short **screen recording** — see the **[Screen Recording Guide](docs/05-screen-recording-guide.md)** (Alamo Zoom by default; one specific backup per OS if Zoom isn't working) — and submit it with whatever the lab asks for. Every lab is scored against the same 4-criterion, 4-level **[Grading Rubric](docs/04-grading-rubric.md)** so you know in advance exactly what counts.
 
