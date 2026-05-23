@@ -1,0 +1,55 @@
+#cloud-config
+# =====================================================================
+# cloud-init user-data  -  Module 13 Cloud Computing lab
+# =====================================================================
+# This is "user-data": a declarative description of how a server should
+# configure ITSELF on first boot. The exact same file format works on
+# AWS EC2, Google Cloud, Azure, Oracle Cloud, DigitalOcean, and Multipass.
+# That is what makes cloud-init the platform-agnostic standard for
+# provisioning cloud servers.
+#
+# BEFORE YOU LAUNCH:
+#   1. Replace YOUR_NAME_HERE (two places) with your actual name.
+#   2. Replace PASTE_YOUR_PUBLIC_KEY_HERE with YOUR public key
+#      (the lab tells you how to generate one).
+# =====================================================================
+
+# --- Create a login user the cloud way: no password, SSH key only ---
+users:
+  - name: clouduser
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true          # password login disabled - keys only, like real cloud
+    ssh_authorized_keys:
+      - PASTE_YOUR_PUBLIC_KEY_HERE
+
+# --- Install packages on first boot ---
+package_update: true
+packages:
+  - nginx
+
+# --- Write a custom landing page so you can prove YOUR server is serving it ---
+write_files:
+  - path: /var/www/html/index.html
+    permissions: '0644'
+    content: |
+      <!DOCTYPE html>
+      <html>
+        <head><title>Cloud server provisioned by YOUR_NAME_HERE</title></head>
+        <body style="font-family: sans-serif; max-width: 40em; margin: 4em auto;">
+          <h1>It works.</h1>
+          <p>This server was provisioned automatically by cloud-init,
+             configured by YOUR_NAME_HERE for ITSC-1316.</p>
+          <p>Nothing here was clicked together by hand - the entire server
+             built itself from a declarative config on first boot.</p>
+        </body>
+      </html>
+
+# --- Make sure nginx is enabled and running after install ---
+runcmd:
+  - systemctl enable --now nginx
+  - systemctl restart nginx
+
+# --- A visible marker that first-boot finished ---
+final_message: "cloud-init finished. The server provisioned itself in $UPTIME seconds."

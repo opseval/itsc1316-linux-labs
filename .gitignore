@@ -1,0 +1,34 @@
+# --- Screencasts and large media ---
+# Do NOT commit video files. They bloat the repo and GitHub rejects files >100MB.
+# Upload screencasts to YouTube (unlisted), Loom, or Google Drive and put the
+# LINK in your submission / PORTFOLIO.md instead.
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.cast
+
+# --- Secrets: never commit private keys ---
+# Your cloud-init file may reference your PUBLIC key (safe). Never commit a
+# PRIVATE key. These patterns block the common ones.
+id_rsa
+id_ed25519
+id_ecdsa
+*.pem
+*_private*
+*.key
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# --- Scratch ---
+scratch/
+tmp/
+*.log
