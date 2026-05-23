@@ -19,8 +19,10 @@ By the end of this lab you will be able to:
 
 - Reduce a system's attack surface by removing unnecessary privileges (SUID, world-writable files).
 - Apply the principle of least privilege to a real file and a real service.
+- Inventory a system's **exposed network services** and reason about which are needed — recognizing that listening services are part of the attack surface.
 - Investigate a performance problem with evidence before changing anything.
 - Diagnose a failed `systemd` service using logs, and choose a safe remediation.
+- Distinguish a configuration error from a resource constraint from possibly-malicious behavior.
 
 ---
 
@@ -74,6 +76,15 @@ Users report the machine is sluggish. Investigate with the process tools from Mo
 **4. A service keeps failing.**
 A service called `reportd` was configured to start at boot but it keeps failing. Use `systemctl status reportd` and `journalctl -u reportd` to find out *why* it fails — read the actual error, do not guess. Once you understand the root cause, **stop it and prevent it from auto-starting** (disable or mask it). In your incident report, state the root cause in one sentence.
 
+**5. Survey the attack surface (assessment, not a fix).**
+A system's exposed network services are part of its attack surface — every service listening on a port is something an attacker could reach. Inventory what is listening:
+
+```
+sudo ss -tulpn
+```
+
+For each listening service, ask: *does this need to be reachable, and by whom?* You are not changing anything here — you are documenting the exposure, which is the first step of any real hardening review. Record the listening services and a one-line judgment for each in your incident report.
+
 > **Methodology matters.** For each issue, collect evidence *before* you change anything. "Trying random fixes" is how administrators turn a small problem into an outage. Symptoms tell you where to look; the root cause tells you what to fix.
 
 ---
@@ -116,6 +127,11 @@ VM hostname (run `hostname`):
 4. Failed service
    - Root cause (from the logs, in one sentence):
    - How you remediated it, and why "reinstalling everything" would have been the wrong first move:
+
+5. Attack surface (listening services, from `sudo ss -tulpn`)
+   - The listening services you found, and a one-line judgment for each
+     (needed? who should reach it?):
+   - Which one service, if any, would you investigate first for tightening, and why:
 ```
 
 ---
@@ -153,6 +169,7 @@ Or just `multipass stop labvm` to leave it as-is. Do not delete `labvm`.
 - [ ] Located the payroll file and applied least-privilege permissions
 - [ ] Identified and stopped the runaway process (with evidence)
 - [ ] Diagnosed the failed service from its logs and disabled/masked it
+- [ ] Surveyed listening services with `ss -tulpn` and judged the attack surface
 - [ ] Ran `check-security.sh` and all checks PASS
 - [ ] Wrote the incident report
 - [ ] Recorded the Zoom screen recording (webcam off)

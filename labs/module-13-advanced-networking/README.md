@@ -1,4 +1,4 @@
-# Modules 9 & 13 Lab: Advanced Network Configuration (Multipass, Two VMs)
+# Module 13 Lab: Advanced Network Configuration (Multipass, Two VMs)
 
 **Hands-on multi-machine lab. Replaces the former written assignment. You will run two VMs that talk to each other.**
 
@@ -17,10 +17,12 @@ So far you have worked on one machine. Real networks are about machines *finding
 
 By the end of this lab you will be able to:
 
-- Read a routing table and identify the default gateway and per-interface routes.
+- Identify a system's network interfaces and IP addresses, and read a routing table to find the default gateway.
 - Distinguish a **connectivity** problem from a **name-resolution** problem using evidence.
 - Configure persistent local name resolution with `/etc/hosts`.
-- Reason about why a host can be reachable one way and not another.
+- Inventory the **network services** listening on a host and explain what each is for.
+- Distinguish a **runtime** network change from a **persistent** one, and explain where persistent config lives on Ubuntu.
+- Reason about why a host can be reachable one way and not another, and apply a structured troubleshooting process.
 
 ---
 
@@ -42,8 +44,8 @@ multipass list
 From the **root of your cloned repo** (so the paths below resolve), run:
 
 ```
-multipass transfer labs/module-09-13-networking/setup-net.sh labvm:/home/ubuntu/
-multipass transfer labs/module-09-13-networking/check-net.sh labvm:/home/ubuntu/
+multipass transfer labs/module-13-advanced-networking/setup-net.sh labvm:/home/ubuntu/
+multipass transfer labs/module-13-advanced-networking/check-net.sh labvm:/home/ubuntu/
 multipass shell labvm
 ```
 
@@ -133,6 +135,32 @@ If external names resolve, your global DNS is healthy and your `/etc/hosts` chan
 
 ---
 
+## Part D — Network services, and runtime vs. persistent configuration
+
+A networked machine doesn't just *reach* other hosts — it also *offers* services that others reach. Knowing which services are listening is core networking knowledge (and, as you'll see in the security module, every listening service is part of your attack surface).
+
+1. **See what services are listening on your VM:**
+
+   ```
+   sudo ss -tulpn
+   ```
+
+   This lists every TCP/UDP port that has a program listening on it. Identify at least one service and the program behind it (for example, `sshd` listening on port 22 is what let you SSH in during Part A). In your writeup, name two listening services and say, in plain language, what each is *for*.
+
+2. **Runtime vs. persistent — see the difference directly.** Add a temporary route at the command line, confirm it exists, then understand that it will not survive a reboot:
+
+   ```
+   sudo ip route add 198.51.100.0/24 via <your-default-gateway>
+   ip route | grep 198.51.100
+   sudo ip route del 198.51.100.0/24 via <your-default-gateway>
+   ```
+
+   That `ip route add` is a **runtime** change — gone on reboot. Contrast it with the `/etc/hosts` edit you made in Part B, which is **persistent** because it lives in a config file. On Ubuntu, persistent interface configuration lives in **netplan** (`/etc/netplan/*.yaml`); look at that file (`cat /etc/netplan/*.yaml`) but do **not** edit it in this lab — a bad netplan change can cut off your VM's network.
+
+> **Why this matters:** "It worked until I rebooted" is one of the most common networking tickets. It almost always means someone made a runtime change and never made it persistent. Knowing which changes survive a reboot — and where persistent config lives — is exactly the judgment this distinction builds.
+
+---
+
 ## Evaluation (Required)
 
 Make sure `fileserver` is still running, then inside `labvm`:
@@ -150,7 +178,7 @@ Fix any FAILs and re-run until everything passes.
 A few sentences per item, in your own words:
 
 ```
-TROUBLESHOOTING WRITEUP — Modules 9 & 13
+TROUBLESHOOTING WRITEUP — Module 13
 Name:
 labvm hostname (run `hostname`):
 
@@ -160,6 +188,10 @@ labvm hostname (run `hostname`):
    connectivity problem (be specific about which commands and outputs):
 4. A 5-step troubleshooting playbook for the report "the server is reachable
    by IP but not by hostname" (your own words, in order):
+5. Two services listening on your VM (from `sudo ss -tulpn`) and what each is for:
+6. In your own words: the difference between a RUNTIME network change (like
+   `ip route add`) and a PERSISTENT one (like editing /etc/hosts or netplan),
+   and why "it worked until I rebooted" usually points to a runtime change:
 ```
 
 ---
@@ -200,6 +232,8 @@ Do not delete `labvm`.
 - [ ] Showed name resolution was broken (`getent hosts fileserver` → bogus IP)
 - [ ] Corrected the `/etc/hosts` entry to the real IP
 - [ ] Verified ping-by-name now works and external DNS still works
+- [ ] Listed listening services with `sudo ss -tulpn` and identified two
+- [ ] Saw a runtime route change vs. the persistent `/etc/hosts` edit, and looked at netplan
 - [ ] Ran `check-net.sh` and all checks PASS
 - [ ] Wrote the troubleshooting writeup
 - [ ] Recorded the Zoom screen recording (webcam off)

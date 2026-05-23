@@ -70,20 +70,27 @@ You should see `labvm` with a state of `Running` and an IP address.
 
 Every lab follows the same five steps. Learn them once here.
 
-### Step 1 — Download the lab's scripts
+### Step 1 — Get the lab's scripts
 
-Each lab in Canvas includes two files: a **setup script** (`setup-*.sh`) that builds the lab scenario, and a **check script** (`check-*.sh`) that grades your work. Download both to your computer (they will land in your Downloads folder).
+Each lab lives in its own folder under `labs/` in your cloned repo (see [GitHub Primer](03-github-primer.md) if you haven't cloned yet). The two files you'll work with are `setup-*.sh` (builds the lab scenario) and `check-*.sh` (grades your work). No downloads needed — they're already on your computer once you've cloned.
 
 ### Step 2 — Transfer the scripts into your VM
 
-`multipass transfer` copies files from your computer into the VM. From your computer's terminal:
+`multipass transfer` copies files from your computer into the VM. From your computer's terminal, **at the root of your cloned repo** (so the `labs/...` paths resolve), run:
 
 ```
-multipass transfer ~/Downloads/setup-example.sh labvm:/home/ubuntu/
-multipass transfer ~/Downloads/check-example.sh labvm:/home/ubuntu/
+multipass transfer labs/<lab-folder>/setup-<name>.sh labvm:/home/ubuntu/
+multipass transfer labs/<lab-folder>/check-<name>.sh labvm:/home/ubuntu/
 ```
 
-On Windows the path looks like `C:\Users\YOU\Downloads\setup-example.sh` instead of `~/Downloads/...`.
+For example, for the Module 6 lab:
+
+```
+multipass transfer labs/module-06-users-and-permissions/setup-users.sh labvm:/home/ubuntu/
+multipass transfer labs/module-06-users-and-permissions/check-users.sh labvm:/home/ubuntu/
+```
+
+On Windows, the same commands work in PowerShell (forward slashes are fine in arguments to `multipass`).
 
 ### Step 3 — Open a shell inside the VM
 
@@ -94,7 +101,7 @@ multipass shell labvm
 Your prompt changes to `ubuntu@labvm:~$`. You are now *inside* the Linux system. Run the setup script to build the scenario (the lab setup scripts always need root):
 
 ```
-sudo bash setup-example.sh
+sudo bash setup-<name>.sh
 ```
 
 ### Step 4 — Do the lab
@@ -106,7 +113,7 @@ Follow the lab instructions. Work entirely inside the VM shell.
 When you think you are done, run the check script:
 
 ```
-bash check-example.sh
+bash check-<name>.sh
 ```
 
 It prints a PASS or FAIL for each requirement. Fix any FAILs and run it again until everything passes — exactly like a real admin re-testing after a change.
@@ -203,5 +210,8 @@ This course uses **Ubuntu** because Multipass makes it free and instant on your 
 | VM stuck "Starting" | `multipass stop labvm` then `multipass start labvm`. |
 | Can't transfer a file | Check the path on your computer is exact; use full paths. |
 | Forgot the VM's IP | `multipass list` or, inside the VM, `ip a`. |
+| VM has no internet / can't resolve names | Usually a **VPN or firewall** — see the Troubleshooting Guide. |
 
-Post anything this table does not cover to the **Q&A Discussion Board** with a screenshot of the exact command and error.
+**For anything this table doesn't cover — especially VPN, corporate-network, or "no internet in the VM" problems — see the full [Multipass Troubleshooting Guide](02-multipass-troubleshooting.md).** It covers all three platforms with fixes and links to Canonical's official docs.
+
+Post anything you can't resolve to the **Q&A Discussion Board** with a screenshot of the exact command and error.

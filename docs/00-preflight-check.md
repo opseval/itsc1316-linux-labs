@@ -48,7 +48,7 @@ The first run downloads Ubuntu, so give it a few minutes. You will see a series 
 Take a **screenshot of the summary block** at the end (the part that says `Passed: … Failed: …` and `RESULT: …`) and submit it to the Week 1 Preflight Check assignment in Canvas.
 
 - **All PASS** → you are ready. 
-- **Any FAIL** → post the full output in the **Q&A Discussion Board** right away. We will sort it out together long before it can affect a grade. This is exactly what the first week is for.
+- **Any FAIL** → check the **[Multipass Troubleshooting Guide](02-multipass-troubleshooting.md)** first (the FAIL table below points you to the right section — VPN issues are the most common). If that doesn't resolve it, post the full output in the **Q&A Discussion Board** right away. We will sort it out together long before it can affect a grade. This is exactly what the first week is for.
 
 ---
 

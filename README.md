@@ -2,16 +2,21 @@
 
 Hands-on Linux labs that run on a free virtual machine on **your own computer** using [Canonical Multipass](https://multipass.run). You administer a real Linux system, prove your work with a self-grading script, and — if you choose — build a public portfolio that future employers can see.
 
-> **New here? Do these three things in order:**
+> **New here? Do these four things in order:**
 > 1. Run the **[Preflight Check](docs/00-preflight-check.md)** to confirm your computer can run the labs (week 1).
-> 2. Follow the **[Multipass Setup Guide](docs/01-multipass-setup-guide.md)** to build your course VM.
-> 3. Start with the labs in [`labs/`](labs/), in module order.
+> 2. Follow the **[GitHub & Git Primer](docs/03-github-primer.md)** to make a GitHub account and get your own copy of this repo onto your computer.
+> 3. Follow the **[Multipass Setup Guide](docs/01-multipass-setup-guide.md)** to build your course VM.
+> 4. Start with the labs in [`labs/`](labs/), in module order.
+>
+> Hitting problems — no internet in the VM, a VPN in the way, a launch that won't start? See the **[Multipass Troubleshooting Guide](docs/02-multipass-troubleshooting.md)**.
 
 ---
 
 ## Get your own copy (do this first)
 
-This repository is a **template**. You do not work in this shared repo — you make your own copy:
+This repository is a **template**. You do not work in this shared repo — you make your own copy. If you have never used GitHub before, **the [GitHub & Git Primer](docs/03-github-primer.md) walks the whole thing step by step**, including making an account and installing git.
+
+The 30-second version for people who already use git:
 
 1. Click the green **“Use this template”** button at the top of the GitHub page, then **“Create a new repository.”**
 2. Name it something like `itsc1316-labs-yourname`. You can make it **private** (just for you and your instructor) or **public** (so it can become a portfolio — see below).
@@ -54,14 +59,25 @@ Then record a short **screen recording** (use your Alamo Colleges Zoom account �
 
 ## Labs
 
+Every module outside the midterm (8) and final (16) has at least one hands-on lab.
+
 | Module | Lab | Skills |
 | --- | --- | --- |
+| 1 | [Introduction: First Contact with Linux](labs/module-01-introduction-to-linux/) | OS identity, kernel, shell, distributions, FHS first look |
+| 2 | [Accessing a Linux System](labs/module-02-accessing-a-linux-system/) | shell + SSH access, user passwords, time sync, `man`/`--help` |
+| 3 | [The Shell: Streams, Pipes & a Real Script](labs/module-03-shell-and-files/) | redirection, pipes, variables, writing a working Bash script |
+| 4 | [Filesystem Navigation](labs/module-04-filesystem-navigation/) | FHS, absolute/relative paths, `find`, redirection |
+| 5 | [Storage Monitoring](labs/module-05-storage-monitoring/) | `df` vs `du`, finding disk hogs, capacity decisions |
 | 6 | [Users, Ownership & Permissions](labs/module-06-users-and-permissions/) | `chown`, `chmod`, groups, `sudo`, least privilege |
-| 9 / 13 | [Networking (two-VM)](labs/module-09-13-networking/) | routing, `/etc/hosts`, connectivity vs. name resolution |
+| 7 | [Software & Archives](labs/module-07-software-and-archives/) | `apt`, repositories, `dpkg`, `tar`/gzip archives |
+| 9 | [Networking Fundamentals](labs/module-09-networking-fundamentals/) | interfaces, IP addressing, default gateway, layered connectivity |
+| 10 | [Processes & System Resources](labs/module-10-processes-and-resources/) | `ps`, `top`, signals, `nice`/`renice`, finding a runaway process |
+| 11 | [Devices, Mounting & Persistence](labs/module-11-devices-and-mounting/) | `lsblk`, loop devices, `mkfs`, `mount`, `/etc/fstab`, `fsck` |
+| 12 | [systemd: Services, Boot & Localization](labs/module-12-systemd-services/) | `systemctl`, writing a unit, `journalctl`, `systemd-analyze`, locale |
+| 13 | [Advanced Network Configuration (two-VM)](labs/module-13-advanced-networking/) | routing, `/etc/hosts`, connectivity vs. name resolution, services, runtime vs. persistent |
 | 13 | [Cloud Computing with cloud-init](labs/module-13-cloud-computing/) | declarative provisioning, SSH keys, first-boot automation |
 | 14 | [Security & Troubleshooting (break/fix)](labs/module-14-security-troubleshooting/) | SUID, attack surface, evidence-based troubleshooting |
-
-*(More labs are added as the course progresses.)*
+| 15 | [Capstone: Inherit & Recover a Server](labs/module-15-capstone/) | integration of all skills; specifications-driven; handover report |
 
 ---
 

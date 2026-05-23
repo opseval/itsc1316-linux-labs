@@ -18,8 +18,11 @@ In this lab you secure a shared directory for a sales team. You will fix broken 
 
 By the end of this lab you will be able to:
 
-- Change file and directory ownership with `chown`.
+- Explain how Linux uses **users and groups** to control access to files and resources.
+- Change file and directory ownership with `chown`, and explain why ownership matters in a multi-user system.
 - Set precise permissions with `chmod`, including the difference between owner, group, and others.
+- Apply the **principle of least privilege** — grant exactly the access required and no more.
+- Identify common **security and usability problems caused by incorrect permissions**.
 - Use `sudo` to perform privileged actions safely.
 - Reason about *why* a given permission set is correct for a real-world scenario, not just how to type it.
 
