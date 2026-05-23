@@ -49,10 +49,11 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "itsc1316"
 
 ```
 New-Item -ItemType Directory -Force -Path ~/.ssh | Out-Null
-ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519 -N '""' -C "itsc1316"
+ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519 -C "itsc1316"
+# When it asks "Enter passphrase", press Enter twice to leave it empty.
 ```
 
-(Windows OpenSSH manages `~/.ssh` permissions via ACLs — no `chmod` needed. PowerShell's `mkdir` doesn't accept `-p`, so we use `New-Item -Force`. The passphrase is `'""'` because PowerShell's quoting strips a bare `""`.) Then print your **public** key:
+(Windows OpenSSH manages `~/.ssh` permissions via ACLs — no `chmod` needed. PowerShell's `mkdir` doesn't accept `-p`, so we use `New-Item -Force`. We skip `-N ""` because PowerShell's argument-passing rules can strip or corrupt the empty quoted value depending on the version; pressing Enter twice at the interactive prompt is foolproof.) Then print your **public** key:
 
 ```
 cat ~/.ssh/id_ed25519.pub

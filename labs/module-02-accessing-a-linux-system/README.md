@@ -71,10 +71,11 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
 
 ```
 New-Item -ItemType Directory -Force -Path ~/.ssh | Out-Null
-ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519 -N '""'
+ssh-keygen -t ed25519 -f $HOME\.ssh\id_ed25519
+# When it asks "Enter passphrase", press Enter twice to leave it empty.
 ```
 
-(Windows OpenSSH manages `~/.ssh` permissions through ACLs automatically — no `chmod` equivalent is needed. PowerShell's `mkdir` is an alias for `New-Item` and does **not** accept `-p`, so we use `New-Item -Force` directly. The empty-string passphrase is passed as `'""'` because PowerShell's quoting rules strip a bare `""`.)
+(Windows OpenSSH manages `~/.ssh` permissions through ACLs automatically — no `chmod` equivalent is needed. PowerShell's `mkdir` is an alias for `New-Item` and does **not** accept `-p`, so we use `New-Item -Force` directly. We skip `-N ""` because PowerShell's argument-passing rules can strip or corrupt the empty quoted value depending on the version; pressing Enter twice at the interactive prompt is foolproof.)
 
 **Step B — still on your host, push the public key into labvm and append it to authorized_keys:**
 
