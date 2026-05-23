@@ -19,7 +19,7 @@ id_ecdsa
 *_private*
 *.key
 
-# --- OS / editor noise ---
+# --- OS / editor / agent noise ---
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -27,6 +27,9 @@ desktop.ini
 *~
 .idea/
 .vscode/
+.claude/
+.cursor/
+.aider*
 
 # --- Scratch ---
 scratch/
