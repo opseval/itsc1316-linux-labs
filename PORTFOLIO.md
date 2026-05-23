@@ -14,7 +14,7 @@ A good portfolio entry is **specific** and **honest**: what the task was, what y
 
 ## How to use this template
 
-For 3–4 labs you are proudest of, copy the **Case Study** block below and fill it in. Keep each one short — a hiring manager skims. Link to your screencast (upload it unlisted to YouTube/Loom and paste the link; do **not** commit video files to the repo). Drop in a screenshot or a snippet of terminal output as evidence.
+For 3–4 labs you are proudest of, copy the **Case Study** block below and fill it in. Keep each one short — a hiring manager skims. If you want to include a recording, note that the Zoom recordings you submit for class may require an Alamo login that outside employers can't use — so for a *public* portfolio, re-upload that clip unlisted to YouTube (or Loom) and paste that link instead. Either way, do **not** commit video files to the repo. A screenshot or a snippet of terminal output (your hostname, the passing check) often works just as well as evidence.
 
 When you are done, update the **About Me** section at the top and delete these instructions.
 
@@ -80,4 +80,4 @@ _(Check off what you've genuinely done — employers may ask you to back any of 
 
 ## A word on integrity
 
-Everything here should be **your** work on **your** system — your hostname in the screenshots, your voice in the screencasts, your commit history. That is exactly what makes it credible. A portfolio of copied work is worse than no portfolio, because it falls apart the moment someone asks you about it in an interview. The whole point is that you can speak to every line of it.
+Everything here should be **your** work on **your** system — your hostname in the screenshots, your live terminal in the recordings, your commit history. That is exactly what makes it credible. A portfolio of copied work is worse than no portfolio, because it falls apart the moment someone asks you about it in an interview. The whole point is that you can speak to every line of it.

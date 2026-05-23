@@ -11,7 +11,7 @@ In this lab you secure a shared directory for a sales team. You will fix broken 
 | **Estimated Time** | 30–50 minutes |
 | **Environment** | Your Multipass `labvm` (Ubuntu 22.04) |
 | **Scripts** | `setup-users.sh`, `check-users.sh` (download from Canvas) |
-| **Deliverable** | A 60–90 second screencast showing `check-users.sh` passing, plus your written answers to the two reflection questions |
+| **Deliverable** | A 60–90 second Zoom screen recording (webcam off) showing `check-users.sh` passing, plus your written answers to the two reflection questions |
 | **Key Location** | `/salesteam` |
 
 ## Outcomes
@@ -102,8 +102,8 @@ Real understanding shows up in *why*, not just *what*. Answer both in 2–3 sent
 
 Submit **two things** to Canvas:
 
-1. A **60–90 second screencast** that shows: `hostname` and `whoami` (so we know it is your VM), then `bash check-users.sh` passing all checks, and you **narrating one decision you made** ("I used 660 here because…"). See the Multipass Setup Guide for recording tools.
-2. Your **written answers** to the two reflection questions above (a few sentences each).
+1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional). It must show, in one continuous take: `hostname` and `whoami` (so we know it is your VM), then `bash check-users.sh` passing all checks. See Part 4 of the Multipass Setup Guide for the Zoom recording and submission steps (a **Zoom Cloud link is preferred**; keep your own `.mp4` copy for a possible portfolio).
+2. Your **written answers** to the two reflection questions above (a few sentences each). This is where you explain your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may use an AI assistant to help you understand commands, but include a one-line note of anything you asked it and what you verified yourself. The screencast and reflection answers are how you demonstrate the work is yours.
 
@@ -129,7 +129,7 @@ Do **not** delete `labvm` — later labs reuse it.
 - [ ] Set `generate_reports.sh` to be executable by the owner only
 - [ ] Ran the script and confirmed three `.xls` reports were created
 - [ ] Ran `check-users.sh` and all checks PASS
-- [ ] Recorded the screencast (hostname + whoami + passing check + narration)
+- [ ] Recorded the Zoom screen recording (webcam off; hostname + whoami + passing check)
 - [ ] Wrote answers to both reflection questions
 - [ ] Submitted screencast + written answers to Canvas
 

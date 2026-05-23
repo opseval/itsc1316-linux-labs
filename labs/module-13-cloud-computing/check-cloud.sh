@@ -70,7 +70,7 @@ echo
 echo "-----------------------------------------------"
 echo "  Passed: $pass    Failed: $fail"
 if (( fail == 0 )); then
-  echo "  ALL CHECKS PASSED. Record your screencast and submit."
+  echo "  ALL CHECKS PASSED. Record your Zoom screen recording and submit."
   echo "-----------------------------------------------"
   exit 0
 else

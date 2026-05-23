@@ -13,7 +13,7 @@ You will write a cloud-init config that, on first boot, creates a key-only login
 | **Estimated Time** | 50–80 minutes (plus optional cloud extension) |
 | **Environment** | A fresh Multipass VM named `cloudvm`, launched from your cloud-init file |
 | **Files** | `cloud-init.yaml` (you edit it), `check-cloud.sh` (download from Canvas) |
-| **Deliverable** | A 60–90 second screencast showing `check-cloud.sh` passing and your served page, plus a short writeup |
+| **Deliverable** | A 60–90 second Zoom screen recording (webcam off) showing `check-cloud.sh` passing and your served page, plus a short writeup |
 
 ## Outcomes
 
@@ -186,8 +186,8 @@ cloudvm hostname (run `hostname`):
 
 ## Submission Requirement
 
-1. A **60–90 second screencast** showing `hostname`, `cloud-init status`, `curl http://localhost/` displaying YOUR personalized page, `bash check-cloud.sh` passing, and you narrating what cloud-init did for you.
-2. Your completed **writeup**.
+1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `cloud-init status`, `curl http://localhost/` displaying YOUR personalized page, and `bash check-cloud.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+2. Your completed **writeup** — this is where you explain what cloud-init did and why, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** AI is great for understanding cloud-init syntax — but your key, your name on the page, and your running server are yours. Note anything you asked AI and what you verified.
 
@@ -216,7 +216,7 @@ Keep `labvm` (your main VM) — only `cloudvm` is disposable here.
 - [ ] Ran `check-cloud.sh` and all checks PASS
 - [ ] (Optional) Ran the same config on a real free-tier instance and tore it down
 - [ ] Wrote the writeup
-- [ ] Recorded the screencast
+- [ ] Recorded the Zoom screen recording (webcam off)
 - [ ] Submitted screencast + writeup
 
 ---

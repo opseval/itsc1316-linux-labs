@@ -11,7 +11,7 @@ A previous administrator left this system in rough shape: a tool was given dange
 | **Estimated Time** | 50–75 minutes |
 | **Environment** | Your Multipass `labvm` (Ubuntu 22.04) |
 | **Scripts** | `setup-security.sh`, `check-security.sh` (download from Canvas) |
-| **Deliverable** | A 60–90 second screencast showing `check-security.sh` passing, plus a short **incident report** (template below) |
+| **Deliverable** | A 60–90 second Zoom screen recording (webcam off) showing `check-security.sh` passing, plus a short **incident report** (template below) |
 
 ## Outcomes
 
@@ -122,8 +122,8 @@ VM hostname (run `hostname`):
 
 Submit **two things**:
 
-1. A **60–90 second screencast** showing `hostname`, `whoami`, `bash check-security.sh` passing, and you narrating the root cause of the failed service in your own words.
-2. Your completed **incident report**.
+1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `whoami`, and `bash check-security.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+2. Your completed **incident report** — this is where you state the root cause of the failed service and your reasoning, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** You may ask an AI assistant to explain `find` flags or how to read `journalctl`, but the investigation, the evidence you cite, and the root-cause statement must be yours. Note anything you asked AI and what you confirmed on your own system. An AI can describe what `reportd` *might* fail from; only your VM's logs tell you what it *actually* failed from — cite the real log line.
 
@@ -151,7 +151,7 @@ Or just `multipass stop labvm` to leave it as-is. Do not delete `labvm`.
 - [ ] Diagnosed the failed service from its logs and disabled/masked it
 - [ ] Ran `check-security.sh` and all checks PASS
 - [ ] Wrote the incident report
-- [ ] Recorded the screencast
+- [ ] Recorded the Zoom screen recording (webcam off)
 - [ ] Submitted screencast + incident report
 
 ---

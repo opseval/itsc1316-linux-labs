@@ -11,7 +11,7 @@ So far you have worked on one machine. Real networks are about machines *finding
 | **Estimated Time** | 50–75 minutes |
 | **Environment** | Your `labvm` **plus** a second VM named `fileserver` (you create it in this lab) |
 | **Scripts** | `setup-net.sh`, `check-net.sh` (download from Canvas) |
-| **Deliverable** | A 60–90 second screencast showing `check-net.sh` passing, plus a short troubleshooting writeup |
+| **Deliverable** | A 60–90 second Zoom screen recording (webcam off) showing `check-net.sh` passing, plus a short troubleshooting writeup |
 
 ## Outcomes
 
@@ -164,8 +164,8 @@ labvm hostname (run `hostname`):
 
 ## Submission Requirement
 
-1. A **60–90 second screencast** showing `hostname`, `multipass list` (or `ip a`), `bash check-net.sh` passing, and you **narrating the difference** between the IP test and the name test in your own words.
-2. Your completed **troubleshooting writeup**.
+1. A **60–90 second screen recording** made with your **Alamo Colleges Zoom account** (webcam off; narration optional), showing in one continuous take: `hostname`, `multipass list` (or `ip a`), and `bash check-net.sh` passing. Submit the **Zoom Cloud link** if available (otherwise the `.mp4`); keep your own copy for a possible portfolio. See Setup Guide, Part 4.
+2. Your completed **troubleshooting writeup** — this is where you explain the difference between the IP test and the name test, so the recording does not need narration.
 
 > **AI policy for this lab: AI-OPEN.** AI is fine for understanding `ip route` output or `/etc/hosts` syntax, but the playbook and your evidence must come from your own two VMs. Note anything you asked AI and what you verified. An AI cannot know your `fileserver`'s real IP — only your `multipass list` can.
 
@@ -200,7 +200,7 @@ Do not delete `labvm`.
 - [ ] Verified ping-by-name now works and external DNS still works
 - [ ] Ran `check-net.sh` and all checks PASS
 - [ ] Wrote the troubleshooting writeup
-- [ ] Recorded the screencast
+- [ ] Recorded the Zoom screen recording (webcam off)
 - [ ] Submitted screencast + writeup
 
 ---

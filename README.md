@@ -48,7 +48,7 @@ sudo bash setup-*.sh      # build the scenario
 bash check-*.sh           # grade yourself; fix FAILs; repeat until all PASS
 ```
 
-Then record a short **screencast** and submit it with whatever the lab asks for. The screencast — you, on your own VM, narrating what you did — is what proves the work is yours.
+Then record a short **screen recording** (use your Alamo Colleges Zoom account — see the [Setup Guide](docs/01-multipass-setup-guide.md), Part 4) and submit it with whatever the lab asks for. A continuous recording of you working live on your own VM — webcam off, narration optional — is what proves the work is yours. The "why" lives in each lab's written reflection.
 
 ---
 
