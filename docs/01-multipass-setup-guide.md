@@ -125,7 +125,7 @@ The `-O` writes each file with its remote name (e.g. `setup-users.sh`); `-fsSL` 
 > less setup-<name>.sh check-<name>.sh
 > ```
 >
-> Press `q` to exit `less`. The check script also auto-fetches [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) from GitHub when you run it and prints `INTEGRITY: VERIFIED` at the top if your local script matches the canonical SHA (the grader looks for that line in your recording). If it prints `*** MISMATCH ***`, you (or something) modified the script — re-fetch a fresh copy with the same `curl` command.
+> Press `q` to exit `less`. The check script also auto-fetches [`labs/CHECKSUMS.txt`](../labs/CHECKSUMS.txt) from GitHub when you run it and prints one of three results at the top: `INTEGRITY: VERIFIED` (your local script matches the canonical SHA — the grader looks for this line in your recording), `*** MISMATCH ***` (you or something modified the script — re-fetch a fresh copy with the same `curl` command), or `UNKNOWN` (the VM couldn't reach GitHub, the script's path is missing from `CHECKSUMS.txt`, or `sha256sum`/`shasum` isn't installed — the script's own message names the cause). See [Screen Recording Guide](05-screen-recording-guide.md) for the full recovery recipe.
 
 ### Step 3 — Run setup → do the lab → run check
 
