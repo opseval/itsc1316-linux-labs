@@ -98,11 +98,13 @@ On Windows, the same commands work in PowerShell (forward slashes are fine in ar
 multipass shell labvm
 ```
 
-Your prompt changes to `ubuntu@labvm:~$`. You are now *inside* the Linux system. Run the setup script to build the scenario (the lab setup scripts always need root):
+Your prompt changes to `ubuntu@labvm:~$`. You are now *inside* the Linux system. Run the setup script to build the scenario — **each lab's README says whether to run setup/check with `sudo`.** Most labs use:
 
 ```
 sudo bash setup-<name>.sh
 ```
+
+…but a few labs intentionally run setup as your normal user (it's a read-only or per-user setup), and a few labs need `sudo` on the *check* too. Always follow each lab README's exact command.
 
 ### Step 4 — Do the lab
 

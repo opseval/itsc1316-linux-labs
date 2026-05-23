@@ -124,8 +124,10 @@ if [[ -r /etc/fstab ]]; then
       # loop-backed image that must never auto-mount at boot (a bad line could
       # block the boot otherwise).
       if [[ "$f_opts" == *noauto* ]]; then
-        # Recommended file+loop form: source is the image and options include loop.
-        if [[ "$f_src" == *loopdisk.img && "$f_opts" == *loop* ]]; then
+        # Recommended file+loop form: source is the image (ABSOLUTE path —
+        # fstab does NOT expand ~ or $HOME) and the image must actually
+        # exist; options must include 'loop'.
+        if [[ "$f_src" == /*loopdisk.img && "$f_opts" == *loop* && -f "$f_src" ]]; then
           fstab_ok=1
         # Acceptable UUID form: source begins with UUID= and a type is present.
         elif [[ "$f_src" == UUID=* && -n "$f_type" ]]; then
@@ -139,7 +141,7 @@ if (( fstab_ok == 1 )); then
   ok "a correctly-formatted /etc/fstab line for the practice disk exists (mount point /mnt/practicedisk)"
 else
   if [[ -z "$fstab_line" ]]; then
-    no "no /etc/fstab line mounts /mnt/practicedisk — add:  ~/loopdisk.img (or its absolute path)  /mnt/practicedisk  ext4  loop,noauto  0  0"
+    no "no /etc/fstab line mounts /mnt/practicedisk — add a line with the ABSOLUTE path to your image (fstab doesn't expand ~), e.g.:  ${HOME}/loopdisk.img  /mnt/practicedisk  ext4  loop,noauto  0  0"
   elif ! grep -Eq '[[:space:]/,]noauto[[:space:],]' <<<"$fstab_line"; then
     no "your /etc/fstab line is missing the 'noauto' option — a loop-backed image MUST use noauto so a typo can't block boot. Options should be 'loop,noauto'."
   else

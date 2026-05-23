@@ -67,7 +67,13 @@ The sales team needs a shared folder at `/salesteam`. Right now it is owned by `
 ## Instructions
 
 **1. Fix ownership of the shared directory.**
-Set the owner of `/salesteam` (and everything inside it) to the `ubuntu` user and the `salesteam` group. Use `sudo` because the directory is currently owned by root.
+Set the owner of `/salesteam` (and everything inside it) to **your own user account** and the `salesteam` group — on Multipass that's `ubuntu`, on a cloud-fallback VM it's whatever account you log in as. The portable command is:
+
+```
+sudo chown -R "$(whoami)":salesteam /salesteam
+```
+
+Use `sudo` because the directory is currently owned by root.
 
 > Think about *why* group ownership matters here: the whole point is that everyone on the sales team (members of `salesteam`) should be able to collaborate in this folder.
 
@@ -75,7 +81,7 @@ Set the owner of `/salesteam` (and everything inside it) to the `ubuntu` user an
 Create the file `/salesteam/meeting-highlights.txt`. Make sure its group is **`salesteam`** (a new file inherits *your* group by default, which is `ubuntu` — not the team's group — so you'll need to set it explicitly, or have set the directory's setgid bit beforehand). Set its permissions so that the **owner and the group can read and write it, but everyone else gets nothing** (no read, no write, no execute). Put a line of text in it so it is not empty.
 
 **3. Lock down the report script.**
-The file `/salesteam/generate_reports.sh` should be **executable by its owner only** — not by the group, not by others — and **not writable by the group or others either** (a script anyone can rewrite is just as dangerous as a script anyone can execute). Keep it readable. Set ownership to `ubuntu:salesteam` and permissions accordingly.
+The file `/salesteam/generate_reports.sh` should be **executable by its owner only** — not by the group, not by others — and **not writable by the group or others either** (a script anyone can rewrite is just as dangerous as a script anyone can execute). Keep it readable. Set ownership to `$(whoami):salesteam` (i.e. *your* account and the `salesteam` group) and permissions accordingly.
 
 **4. Run the script and verify its output.**
 Run the script using the execute bit you just set — `cd /salesteam && ./generate_reports.sh` — rather than `bash generate_reports.sh` (which would bypass the permission you're trying to test). Confirm that it creates **three quarterly reports** with the `.xls` extension in `/salesteam` (`Q1-report.xls`, `Q2-report.xls`, `Q3-report.xls`).
@@ -131,7 +137,7 @@ Do **not** delete `labvm` — later labs reuse it.
 ## Final Checklist
 
 - [ ] Ran `setup-users.sh` to build the scenario
-- [ ] Set `/salesteam` ownership to `ubuntu:salesteam`
+- [ ] Set `/salesteam` ownership to `$(whoami):salesteam` (your account + the team group)
 - [ ] Created `meeting-highlights.txt` with mode `660` and some content
 - [ ] Set `generate_reports.sh` to be executable by the owner only
 - [ ] Ran the script and confirmed three `.xls` reports were created

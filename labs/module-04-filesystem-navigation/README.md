@@ -124,10 +124,10 @@ You should see `backup.sh` and `diskcheck.sh` in `scripts/`, `old-backup.log` in
 
 An **absolute path** starts at the root (`/`) and works from anywhere. A **relative path** starts from your current location (`.` = here, `..` = up one). Reach `~/Documents/scripts` two different ways and confirm with `pwd` each time.
 
-**3a. By absolute path** (works no matter where you start):
+**3a. By absolute path** (works no matter where you start). The portable form uses `$HOME` so it works whether your account is `ubuntu` (Multipass) or something else (cloud fallback):
 
 ```
-cd /home/ubuntu/Documents/scripts
+cd "$HOME/Documents/scripts"      # equivalent to /home/<your-user>/Documents/scripts
 pwd
 ```
 
