@@ -141,7 +141,10 @@ if (( fstab_ok == 1 )); then
   ok "a correctly-formatted /etc/fstab line for the practice disk exists (mount point /mnt/practicedisk)"
 else
   if [[ -z "$fstab_line" ]]; then
-    no "no /etc/fstab line mounts /mnt/practicedisk — add a line with the ABSOLUTE path to your image (fstab doesn't expand ~), e.g.:  ${HOME}/loopdisk.img  /mnt/practicedisk  ext4  loop,noauto  0  0"
+    # Show the student's REAL home path, not $HOME — when this check is run
+    # via sudo (as the README says), $HOME is /root and a copy-pasted hint
+    # would create a broken /root/loopdisk.img line.
+    no "no /etc/fstab line mounts /mnt/practicedisk — add a line with the ABSOLUTE path to your image (fstab doesn't expand ~), e.g.:  ${IMG}  /mnt/practicedisk  ext4  loop,noauto  0  0"
   elif ! grep -Eq '[[:space:]/,]noauto[[:space:],]' <<<"$fstab_line"; then
     no "your /etc/fstab line is missing the 'noauto' option — a loop-backed image MUST use noauto so a typo can't block boot. Options should be 'loop,noauto'."
   else

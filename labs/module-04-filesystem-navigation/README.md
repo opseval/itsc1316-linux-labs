@@ -69,7 +69,7 @@ For each of the four directories below, find **one real file** that lives there 
 | Directory | Role | Find an example with |
 | --- | --- | --- |
 | `/etc`  | System-wide configuration | `ls /etc/hostname` (the file naming this machine) |
-| `/home` | Users' personal directories | `ls /home/ubuntu` |
+| `/home` | Users' personal directories | `ls -d "$HOME"` (your own home directory, e.g. `/home/ubuntu` on Multipass) |
 | `/var`  | Variable data: logs, spools, caches | `ls /var/log/dpkg.log` |
 | `/usr`  | Installed software and its support files | `ls /usr/bin/ls` (the `ls` program itself) |
 
@@ -183,7 +183,7 @@ Now write your evidence file in one command. It must contain your real hostname 
 { echo "=== Module 4 FHS evidence ==="; \
   echo "hostname: $(hostname)"; \
   echo "/etc  example: $(ls /etc/hostname)  (system configuration)"; \
-  echo "/home example: $(ls -d /home/ubuntu)  (a user's home directory)"; \
+  echo "/home example: $(ls -d "$HOME")  (a user's home directory)"; \
   echo "/var  example: $(ls /var/log/dpkg.log)  (variable data / a log)"; \
   echo "/usr  example: $(ls /usr/bin/ls)  (an installed program)"; \
 } > ~/Documents/fhs-evidence.txt
