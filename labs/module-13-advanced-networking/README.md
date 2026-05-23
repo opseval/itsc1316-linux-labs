@@ -44,6 +44,7 @@ multipass list
 From the **root of your cloned repo** (so the paths below resolve), run:
 
 ```
+multipass start labvm                                                       # in case it's stopped
 multipass transfer labs/module-13-advanced-networking/setup-net.sh labvm:/home/ubuntu/
 multipass transfer labs/module-13-advanced-networking/check-net.sh labvm:/home/ubuntu/
 multipass shell labvm
@@ -213,10 +214,10 @@ To free resources between sessions (keeps both VMs and their state):
 multipass stop labvm fileserver
 ```
 
-You can keep `fileserver` for later networking labs, or remove it when the course's networking modules are done:
+You can keep `fileserver` for later networking labs, or remove it when the course's networking modules are done. Use `delete --purge` so this only affects `fileserver` (a plain `multipass purge` is global and would wipe any other deleted instances):
 
 ```
-multipass delete fileserver && multipass purge
+multipass delete --purge fileserver
 ```
 
 Do not delete `labvm`.

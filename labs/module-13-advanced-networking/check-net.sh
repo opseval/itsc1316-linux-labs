@@ -44,8 +44,14 @@ if grep -qE '[[:space:]]fileserver([[:space:]]|$)' /etc/hosts; then
     no "'fileserver' resolves to the default gateway ($ip_for_name) — that pings, but it's not the second VM"
   elif printf '%s\n' "$local_ips" | grep -qFx "$ip_for_name"; then
     no "'fileserver' resolves to one of labvm's OWN IPs ($ip_for_name) — pinging yourself doesn't prove the second VM is reachable"
+  elif ! [[ "$ip_for_name" =~ ^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.) ]]; then
+    # Multipass always issues private RFC 1918 addresses (10.x on macOS, 192.168.x
+    # on common Windows/QEMU configs, occasionally 172.16-31.x). A public IP
+    # cannot be a real Multipass fileserver — most likely the student mapped it
+    # to a random reachable host on the internet to fake a green check.
+    no "'fileserver' resolves to $ip_for_name, which is a public address — Multipass VMs always get private IPs (10.x / 192.168.x / 172.16-31.x). Use the IP from 'multipass list'."
   else
-    ok "'fileserver' resolves to $ip_for_name (no longer the bogus address, not local/gateway)"
+    ok "'fileserver' resolves to $ip_for_name (no longer the bogus address, not local/gateway, in a Multipass-plausible private range)"
   fi
 else
   no "No 'fileserver' entry found in /etc/hosts"

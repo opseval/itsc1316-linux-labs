@@ -115,7 +115,7 @@ Fix any FAILs. **Note:** cloud-init runs only on *first* boot, so if you need to
 
 ```
 # from your computer, at the repo root
-multipass delete cloudvm && multipass purge
+multipass delete --purge cloudvm
 multipass launch 22.04 --name cloudvm --cloud-init labs/module-13-cloud-computing/cloud-init.yaml
 ```
 
@@ -198,7 +198,7 @@ cloudvm hostname (run `hostname`):
 ```
 multipass stop cloudvm
 # or, to reclaim space once the cloud module is done:
-multipass delete cloudvm && multipass purge
+multipass delete --purge cloudvm
 ```
 
 Keep `labvm` (your main VM) — only `cloudvm` is disposable here.

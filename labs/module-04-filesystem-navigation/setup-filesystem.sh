@@ -17,8 +17,12 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-# Work in the 'ubuntu' user's home, since that is the account you work from.
-TARGET_HOME="/home/ubuntu"
+# Work in the invoking user's home (not root's, since we ran via sudo). Defaults
+# to 'ubuntu' on Multipass; works correctly on cloud fallback VMs whose default
+# user is something else.
+REAL_USER="${SUDO_USER:-$USER}"
+TARGET_HOME="$(getent passwd "$REAL_USER" 2>/dev/null | cut -d: -f6)"
+[[ -z "$TARGET_HOME" || ! -d "$TARGET_HOME" ]] && TARGET_HOME="/home/${REAL_USER}"
 STAGING="${TARGET_HOME}/mod04-staging"
 
 echo "[setup] Preparing a clean ${STAGING} ..."
@@ -40,8 +44,8 @@ echo "Backup taken on a previous run. Keep for records." > "${STAGING}/old-backu
 
 echo "Notes about the utilities folder." > "${STAGING}/utilities-readme.txt"
 
-# Give the whole staging tree to the ubuntu user so they can move files freely.
-chown -R ubuntu:ubuntu "${STAGING}"
+# Give the whole staging tree to the invoking user so they can move files freely.
+chown -R "${REAL_USER}:$(id -gn "$REAL_USER")" "${STAGING}"
 
 echo
 echo "[setup] Done. Unsorted files are waiting in ${STAGING}:"

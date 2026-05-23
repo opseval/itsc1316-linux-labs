@@ -99,10 +99,18 @@ if [[ -f "$ARCHIVE" ]]; then
     for c in web app database; do
       grep -q "${c}\.conf" <<<"$toc" && have_conf=$((have_conf+1))
     done
-    if grep -q 'bigdata\.bin' <<<"$toc"; then
-      no "backup archive includes bigdata.bin — the spec says back up the CONFIG files only, not the large disk-hog file"
+    # Spec says "back up the CONFIG files only" — reject any non-config entry
+    # (not just bigdata.bin). Allowed entries: the three .conf files, the
+    # 'configs/' directory entry, and the archive root './' marker.
+    bad_entries=$(printf '%s\n' "$toc" \
+      | grep -v -E '(^|/)$' \
+      | grep -v -E '(^|/)configs/?$' \
+      | grep -v -E '(web|app|database)\.conf$' \
+      || true)
+    if [[ -n "$bad_entries" ]]; then
+      no "backup archive contains files outside the config set — the spec says configs only. Extra entries: $(printf '%s' "$bad_entries" | tr '\n' ' ')"
     elif (( have_conf == 3 )); then
-      ok "~/inherited-backup.tar.gz is a valid .tar.gz containing all three config files (and not the disk hog)"
+      ok "~/inherited-backup.tar.gz is a valid .tar.gz containing the three config files and nothing else"
     else
       no "~/inherited-backup.tar.gz is valid but is missing config files (found $have_conf of 3: web/app/database.conf) — archive the configs directory"
     fi
@@ -159,12 +167,16 @@ BUDGET="${FIN_DIR}/budget.txt"
 if [[ -f "$BUDGET" ]]; then
   bp=$(perm3 "$BUDGET")
   bother="${bp: -1}"   # last octal digit = 'other' permissions
-  if (( (bother & 6) == 0 )); then
-    ok "${BUDGET} is not readable or writable by others (mode $(mode_of "$BUDGET"))"
+  # 'No access' means ZERO bits for others — including execute. Mode 661 would
+  # leave execute on for others and must fail.
+  if (( bother == 0 )); then
+    ok "${BUDGET} gives others no access at all (mode $(mode_of "$BUDGET"))"
   elif (( (bother & 2) != 0 )); then
     no "${BUDGET} is still world-writable (mode $(mode_of "$BUDGET")) — confidential data must not be writable by others"
-  else
+  elif (( (bother & 4) != 0 )); then
     no "${BUDGET} is still world-readable (mode $(mode_of "$BUDGET")) — confidential budget data must not be readable by others"
+  else
+    no "${BUDGET} still has an execute bit set for others (mode $(mode_of "$BUDGET")) — for a data file, the 'other' octal digit should be 0"
   fi
 else
   no "${BUDGET} is missing — secure it, do not delete it"

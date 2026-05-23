@@ -17,8 +17,12 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-# Work in the 'ubuntu' user's home, not root's, since the student works as ubuntu.
-TARGET_HOME="/home/ubuntu"
+# Work in the invoking user's home (not root's, since we ran via sudo). Defaults
+# to 'ubuntu' on Multipass; works correctly on cloud fallback VMs whose default
+# user is something else.
+REAL_USER="${SUDO_USER:-$USER}"
+TARGET_HOME="$(getent passwd "$REAL_USER" 2>/dev/null | cut -d: -f6)"
+[[ -z "$TARGET_HOME" || ! -d "$TARGET_HOME" ]] && TARGET_HOME="/home/${REAL_USER}"
 LABDIR="${TARGET_HOME}/mod03"
 
 echo "[setup] Preparing a clean ${LABDIR} ..."
@@ -43,8 +47,8 @@ EOF
 # file that is there (overwrite vs append).
 echo "This file existed before you started the lab." > "${LABDIR}/existing.txt"
 
-# Hand the directory and its contents to the ubuntu user so they can edit freely.
-chown -R ubuntu:ubuntu "${LABDIR}"
+# Hand the directory and its contents to the invoking user so they can edit freely.
+chown -R "${REAL_USER}:$(id -gn "$REAL_USER")" "${LABDIR}"
 
 echo
 echo "[setup] Done. Your lab files are in ${LABDIR}:"

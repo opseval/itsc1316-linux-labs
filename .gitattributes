@@ -1,0 +1,31 @@
+# Force LF line endings for files Linux will execute or parse.
+# A Windows student cloning with default core.autocrlf=true would otherwise get
+# CRLF in shell scripts, which makes the shebang line read `#!/usr/bin/env bash\r`
+# and the script fail with "bad interpreter" or other obscure errors inside the
+# Linux VM.
+
+*.sh        text eol=lf
+*.bash      text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+
+# PowerShell is happy with either, but pin CRLF so Windows-native editors
+# don't keep "fixing" it on save.
+*.ps1       text eol=crlf
+
+# Markdown / docs / config: native (let the OS decide).
+*.md        text
+*.txt       text
+LICENSE     text
+.gitignore  text
+.gitattributes text
+
+# Binary safety net — never CRLF-normalize these even if .gitconfig says to.
+*.png       binary
+*.jpg       binary
+*.gif       binary
+*.pdf       binary
+*.iso       binary
+*.tar.gz    binary
+*.tgz       binary
+*.zip       binary

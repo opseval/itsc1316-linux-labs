@@ -27,9 +27,11 @@ for u in avery jordan; do
   fi
 done
 
-# Make sure the default 'ubuntu' user is in the salesteam group too,
-# since that is the account you work from.
-usermod -aG salesteam ubuntu
+# Make sure the invoking (default) user is in the salesteam group too,
+# since that is the account the student works from. Defaults to 'ubuntu' on
+# Multipass; works on cloud-fallback VMs whose default user differs.
+LAB_USER="${SUDO_USER:-ubuntu}"
+usermod -aG salesteam "$LAB_USER"
 
 echo "[setup] Building /salesteam directory and seed files..."
 mkdir -p /salesteam

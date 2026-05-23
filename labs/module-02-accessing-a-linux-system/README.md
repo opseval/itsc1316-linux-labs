@@ -55,17 +55,28 @@ This creates two extra users — `devops1` and `devops2` — whose passwords are
 Fill in your real output/answers in `~/module2-access-notes.txt` as you go (`nano ~/module2-access-notes.txt`; save with Ctrl+O, exit with Ctrl+X).
 
 **1. Access the VM two different ways.**
-You're already in via the local Multipass shell — confirm it by running `who` and noting your session. Now open a **second** terminal on your computer and reach the VM over **SSH**:
+You're already in via the local Multipass shell — confirm it by running `who` and noting your session. Now you'll set up SSH access so you can log in like a remote admin. Multipass injects its *own* SSH key into the VM (which is what makes `multipass shell` work), but it does **not** trust your personal key — so a bare `ssh ubuntu@<ip>` will be refused. You have to add your public key to the VM first.
+
+From your computer's terminal (NOT inside the VM):
 
 ```
-# On your computer (NOT inside the VM):
-multipass list                 # find labvm's IP address
-ssh ubuntu@<that-ip>           # Multipass already injected your key — no password needed
+# Find labvm's IP:
+multipass list
+
+# If you don't already have an SSH key on your computer, generate one (just hit Enter at every prompt to accept defaults and no passphrase):
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
+
+# Push your PUBLIC key into labvm and append it to ubuntu's authorized_keys:
+multipass transfer ~/.ssh/id_ed25519.pub labvm:/tmp/mykey.pub
+multipass exec labvm -- bash -c 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat /tmp/mykey.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && rm /tmp/mykey.pub'
+
+# Now SSH in from your computer, in a second terminal window:
+ssh ubuntu@<that-ip>
 ```
 
-Once connected, run `who` again — you should see a second session on a `pts/` line. Record the IP you used and one line of proof the SSH session worked.
+Once connected over SSH, run `who` — you should see *two* sessions: the Multipass shell session AND a `pts/` line for SSH (something like `ubuntu  pts/0  ...  (10.x.x.x)`). Record the IP you connected to, and paste the `who` line that shows the SSH session.
 
-> **Why two ways?** The Multipass shell is like sitting at the machine's console; SSH is how you reach a server that lives in another building or another continent. Real administration is almost always over SSH. Knowing both — and that they land you in the *same* system — is the point.
+> **Why bother?** `multipass shell` is a special case — it's like sitting at the machine's console because Multipass owns the box. SSH is how you actually reach any real server, on any cloud, anywhere on the internet. The two pieces — generate a key, authorize it on the server, then connect — are the same on every Linux box you will ever administer, including the Module 13 cloud lab where you'll do this on a real cloud instance.
 
 **2. Set passwords for the two new users.**
 The setup left `devops1` and `devops2` with locked passwords. Set each one:

@@ -173,9 +173,11 @@ Now **test the line without rebooting**:
 ```
 sudo mount -a              # mounts everything in fstab marked for auto-mount; should NOT error
 sudo mount /mnt/practicedisk   # 'noauto' means we mount it by name to test the fstab entry
-df -hT | grep practicedisk     # confirm the fstab-driven mount worked
+df -hT | grep practicedisk     # confirm the fstab-driven mount worked — keep this output, it's your evidence
 sudo umount /mnt/practicedisk
 ```
+
+> **Use *your* home path.** The README shows `/home/ubuntu/...` because that's the Multipass default. If you're doing the cloud fallback as a different user, your fstab line and check evidence should use **your** real home directory (run `echo $HOME` to see it). The check accepts either.
 
 Because the entry is `noauto`, a mistake in it can't break a future boot — and you proved it works by mounting it by name. **Keep this fstab line in place** (the check confirms a correctly-formatted line exists). Record your fstab line and the test result in your report:
 
@@ -307,9 +309,15 @@ If you want to fully tear down the scenario afterward (do this only **after** yo
 ```
 sudo umount /mnt/practicedisk 2>/dev/null
 sudo umount /mnt/iso 2>/dev/null
-sudo sed -i '\#/home/ubuntu/loopdisk.img#d' /etc/fstab   # remove the fstab line
-sudo losetup -D                                          # detach all loop devices
-rm -f ~/loopdisk.img ~/lab.iso
+sudo sed -i "\#${HOME}/loopdisk.img#d" /etc/fstab        # remove the fstab line
+# Detach ONLY the loop devices backing this lab's files (not every loop device
+# on the system — `losetup -D` is global and could break unrelated work).
+for f in "${HOME}/loopdisk.img" "${HOME}/lab.iso"; do
+  for ld in $(losetup -j "$f" 2>/dev/null | cut -d: -f1); do
+    sudo losetup -d "$ld"
+  done
+done
+rm -f "${HOME}/loopdisk.img" "${HOME}/lab.iso"
 ```
 
 Or just restore your `pre-mod11` snapshot. Do **not** delete `labvm` — later labs reuse it.

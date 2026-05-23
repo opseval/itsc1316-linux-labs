@@ -50,7 +50,9 @@ if [[ -f /opt/payroll/salaries.csv ]]; then
   group_digit="${perms:1:1}"
   other_digit="${perms:2:1}"
   bits_locked=0
-  if (( (other_digit & 6) == 0 && (group_digit & 6) == 0 )); then bits_locked=1; fi
+  # "Only root" means NO bits for group or others — not even execute. Mode 661
+  # (sets execute for others) should fail, so check the full octal digit == 0.
+  if (( other_digit == 0 && group_digit == 0 )); then bits_locked=1; fi
   if (( bits_locked == 1 )) && [[ "$ow" == "root" && "$gr" == "root" ]]; then
     ok "salaries.csv is owned by root:root and locked down from group/others (mode $m)"
   elif (( bits_locked == 0 )); then
@@ -58,6 +60,8 @@ if [[ -f /opt/payroll/salaries.csv ]]; then
       no "salaries.csv is still world-writable (mode $m) — fix the permissions"
     elif (( (other_digit & 4) != 0 )); then
       no "salaries.csv is no longer world-writable but is still world-readable (mode $m) — payroll data should not be readable by others"
+    elif (( (other_digit & 1) != 0 || (group_digit & 1) != 0 )); then
+      no "salaries.csv still has an execute bit set for group or other (mode $m) — for a data file, group/other should be 0"
     else
       no "salaries.csv is still group-readable or group-writable (mode $m) — 'only root' means group bits must be 0 too"
     fi

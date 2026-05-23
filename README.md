@@ -47,11 +47,16 @@ The workflow is the same every time (full details in the [Setup Guide](docs/01-m
 multipass transfer labs/<lab>/setup-*.sh   labvm:/home/ubuntu/
 multipass transfer labs/<lab>/check-*.sh   labvm:/home/ubuntu/
 multipass shell labvm
-# inside the VM
-sudo bash setup-*.sh      # build the scenario
+# inside the VM — see EACH LAB'S README for the exact command:
+# - most labs:   sudo bash setup-*.sh      (builds the scenario as root)
+# - a few labs:       bash setup-*.sh      (read-only setup; runs as you)
 # ...do the lab...
-bash check-*.sh           # grade yourself; fix FAILs; repeat until all PASS
+# - most labs:       bash check-*.sh
+# - a few labs:  sudo bash check-*.sh      (reads root-only state — the README will say so)
+# Fix FAILs and re-run until all PASS.
 ```
+
+> Each per-lab README states the exact `setup` and `check` commands for that lab. Follow those — the boilerplate above is just the shape, not a one-size-fits-all script.
 
 Then record a short **screen recording** (use your Alamo Colleges Zoom account — see the [Setup Guide](docs/01-multipass-setup-guide.md), Part 4) and submit it with whatever the lab asks for. A continuous recording of you working live on your own VM — webcam off, narration optional — is what proves the work is yours. The "why" lives in each lab's written reflection.
 

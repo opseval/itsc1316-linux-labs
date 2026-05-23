@@ -92,11 +92,16 @@ else
   no "report does not record the large file's ~200M size — capture it with:  du -h ~/bigdata/hog.img >> ~/module5-storage-report.txt"
 fi
 
-# 7. The report accounts for the many-small-files directory: it should mention
-#    'manyfiles' AND a count (a number) so the student noticed many small files
-#    add up. We require the manyfiles reference plus a multi-digit number nearby.
-if grep -q 'manyfiles' "$REPORT" && grep -Eq '[0-9]{2,}' "$REPORT"; then
-  ok "report accounts for the many-small-files directory (manyfiles + a count)"
+# 7. The report accounts for the many-small-files directory by recording the
+#    real count. setup-storage.sh creates 600 files; the student should pipe
+#    `find ~/bigdata/manyfiles -type f | wc -l` into the report. Require the
+#    word 'manyfiles' AND a 3-digit count in the 500-699 range on a nearby
+#    line (allows a bit of slack but rejects an arbitrary number like a load
+#    average or a date).
+if grep -q 'manyfiles' "$REPORT" && grep -B2 -A2 'manyfiles' "$REPORT" | grep -Eq '\b(5[0-9]{2}|6[0-9]{2})\b'; then
+  ok "report records the 'manyfiles' directory and its file count (near the expected ~600)"
+elif grep -q 'manyfiles' "$REPORT"; then
+  no "report mentions 'manyfiles' but no plausible count is near it — capture 'find ~/bigdata/manyfiles -type f | wc -l' into the report"
 else
   no "report does not account for ~/bigdata/manyfiles and its file count — record it as the instructions describe"
 fi

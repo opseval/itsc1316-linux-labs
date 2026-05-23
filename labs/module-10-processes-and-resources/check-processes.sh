@@ -54,10 +54,9 @@ fi
 if (( report_exists == 1 )); then
   named_hog=0; has_pid=0; named_tool=0
   grep -qw 'labhog-runaway' "$REPORT" 2>/dev/null && named_hog=1
-  # A PID: a line that records at least a 2+ digit number near "PID", or any
-  # bare multi-digit number on the PID line. We accept any standalone number of
-  # 2+ digits anywhere in the file as evidence a PID was recorded.
-  grep -Eq '[0-9]{2,}' "$REPORT" 2>/dev/null && has_pid=1
+  # A PID must be explicitly labeled, not just "any multi-digit number anywhere".
+  # Accept "PID 1234", "PID:1234", "pid=1234", "pid is 1234" etc. (case-insensitive).
+  grep -Eqi '\bpid\b[^[:alnum:]]{0,5}[0-9]{2,}' "$REPORT" 2>/dev/null && has_pid=1
   grep -Eqi '\b(top|ps|pgrep)\b' "$REPORT" 2>/dev/null && named_tool=1
   if (( named_hog == 1 && has_pid == 1 && named_tool == 1 )); then
     ok "report documents the offending process name, a PID, and the command used to find it"

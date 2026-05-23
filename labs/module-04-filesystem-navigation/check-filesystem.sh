@@ -64,12 +64,14 @@ fi
 util_ok=1
 [[ -f "${DOCS}/utilities/utilities-readme.txt" ]] || util_ok=0
 [[ -s "${DOCS}/utilities/notes.txt" ]] || util_ok=0
-if (( util_ok == 1 )); then
-  if [[ -f "${HOME}/mod04-staging/utilities-readme.txt" ]]; then
-    ok "utilities/ has the copied utilities-readme.txt (original still in staging) and a non-empty notes.txt"
-  else
-    ok "utilities/ has utilities-readme.txt and a non-empty notes.txt (note: 2d asked you to COPY, leaving the original in staging)"
-  fi
+# Part 2d explicitly says COPY (not move). The original must still exist in
+# staging — accepting a moved file would defeat the cp-vs-mv lesson.
+staging_copy_present=0
+[[ -f "${HOME}/mod04-staging/utilities-readme.txt" ]] && staging_copy_present=1
+if (( util_ok == 1 )) && (( staging_copy_present == 1 )); then
+  ok "utilities/ has the COPIED utilities-readme.txt (original still in staging) and a non-empty notes.txt"
+elif (( util_ok == 1 )) && (( staging_copy_present == 0 )); then
+  no "utilities/utilities-readme.txt exists, but the original is gone from ~/mod04-staging — Part 2d says COPY (cp), not MOVE (mv). Put the original back."
 else
   no "utilities/ should contain utilities-readme.txt (copied, Part 2d) and a non-empty notes.txt (created, Part 2e)"
 fi
@@ -119,7 +121,9 @@ if [[ -s "$EVID" ]]; then
   host_ok=0; etc_ok=0; home_ok=0; var_ok=0; usr_ok=0
   grep -q "$HOST" "$EVID" 2>/dev/null && host_ok=1
   grep -q "/etc/hostname" "$EVID" 2>/dev/null && etc_ok=1
-  grep -q "/home/ubuntu" "$EVID" 2>/dev/null && home_ok=1
+  # Accept the literal /home/ubuntu (Multipass default) OR the invoking user's
+  # actual home (cloud-fallback). The lab only requires "an example file from /home".
+  grep -qE "(/home/ubuntu|/home/${USER}|${HOME})" "$EVID" 2>/dev/null && home_ok=1
   grep -q "/var/log/" "$EVID" 2>/dev/null && var_ok=1
   grep -q "/usr/bin/" "$EVID" 2>/dev/null && usr_ok=1
   if (( host_ok && etc_ok && home_ok && var_ok && usr_ok )); then

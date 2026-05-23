@@ -95,9 +95,19 @@ if [[ -s "$NOTES" ]]; then
     no "Evidence file is missing this VM's hostname '$real_host' — run 'hostname' and record it"
   fi
 
-  # 4b. References both access methods (multipass shell AND ssh).
-  if grep -q 'ssh' <<< "$content_lc" && grep -q 'multipass' <<< "$content_lc"; then
-    ok "Evidence file documents both access methods (multipass shell and SSH)"
+  # 4b. References both access methods AND has concrete SSH evidence: an IP
+  #     address recorded for the SSH session, plus a 'pts/' session marker (or
+  #     equivalent SSH-session fingerprint). The 'ssh' and 'multipass' tokens
+  #     alone aren't proof — they already appear in the starter template.
+  has_ip=0; has_pts=0
+  grep -Eq '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' "$NOTES" 2>/dev/null && has_ip=1
+  grep -Eqi 'pts/[0-9]+|sshd?:?\s+session|accepted publickey|from [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$NOTES" 2>/dev/null && has_pts=1
+  if grep -q 'ssh' <<< "$content_lc" && grep -q 'multipass' <<< "$content_lc" && (( has_ip == 1 )) && (( has_pts == 1 )); then
+    ok "Evidence file documents both access methods AND records SSH session evidence (IP + pts/ marker)"
+  elif (( has_ip == 0 )); then
+    no "Evidence file must include the IP address you SSH'd to (4 numbers like 10.122.45.7), not just the literal '<that-ip>' placeholder"
+  elif (( has_pts == 0 )); then
+    no "Evidence file must include real SSH session evidence — paste the 'who' line showing your 'pts/' session, or an sshd log line"
   else
     no "Evidence file must document BOTH access methods — your 'multipass shell' session and your 'ssh ubuntu@<ip>' session"
   fi

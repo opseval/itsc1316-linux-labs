@@ -66,4 +66,5 @@ echo "[setup] Done. Nothing is broken — this lab is build/manage, not break/fi
 echo "        A health-check script is now at /usr/local/bin/labhealth.sh"
 echo "        Your job (see the README): write the labhealth.service unit that"
 echo "        runs it, manage an existing service, and set localization."
-echo "        Grade yourself when finished with:  bash check-systemd.sh"
+echo "        Grade yourself when finished with:  sudo bash check-systemd.sh"
+echo "          (sudo is required — the check reads journalctl and systemd state.)"

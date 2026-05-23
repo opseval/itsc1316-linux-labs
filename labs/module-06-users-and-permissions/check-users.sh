@@ -14,6 +14,11 @@ fail=0
 ok()   { echo "  PASS  $1"; pass=$((pass+1)); }
 no()   { echo "  FAIL  $1"; fail=$((fail+1)); }
 
+# The invoking (default) user is 'ubuntu' on Multipass but can be different on a
+# cloud-fallback VM. Use whoever is logged in as the expected owner so the check
+# is meaningful on both setups.
+LAB_USER="${SUDO_USER:-$(id -un)}"
+
 # Helpers
 owner() { stat -c '%U' "$1" 2>/dev/null; }
 group() { stat -c '%G' "$1" 2>/dev/null; }
@@ -22,11 +27,11 @@ mode()  { stat -c '%a' "$1" 2>/dev/null; }
 echo "=== Module 6 Lab Check: Users, Ownership, and Permissions ==="
 echo
 
-# 1. /salesteam owned by ubuntu:salesteam
-if [[ "$(owner /salesteam)" == "ubuntu" && "$(group /salesteam)" == "salesteam" ]]; then
-  ok "/salesteam is owned by ubuntu:salesteam"
+# 1. /salesteam owned by ${LAB_USER}:salesteam
+if [[ "$(owner /salesteam)" == "$LAB_USER" && "$(group /salesteam)" == "salesteam" ]]; then
+  ok "/salesteam is owned by ${LAB_USER}:salesteam"
 else
-  no "/salesteam should be owned by ubuntu:salesteam (found $(owner /salesteam):$(group /salesteam))"
+  no "/salesteam should be owned by ${LAB_USER}:salesteam (found $(owner /salesteam):$(group /salesteam))"
 fi
 
 # 2. meeting-highlights.txt exists, is non-empty, has mode 660, AND is group-owned
@@ -70,12 +75,12 @@ if [[ -f /salesteam/generate_reports.sh ]]; then
   # execute-only check while still letting anyone overwrite the script.
   perm_ok=0
   if (( (o & 5) == 5 && (g & 3) == 0 && (t & 3) == 0 )); then perm_ok=1; fi
-  if (( perm_ok == 1 )) && [[ "$o_user" == "ubuntu" && "$o_group" == "salesteam" ]]; then
-    ok "generate_reports.sh is owner-only executable and non-writable by others, owned by ubuntu:salesteam (mode $m)"
+  if (( perm_ok == 1 )) && [[ "$o_user" == "$LAB_USER" && "$o_group" == "salesteam" ]]; then
+    ok "generate_reports.sh is owner-only executable and non-writable by others, owned by ${LAB_USER}:salesteam (mode $m)"
   elif (( perm_ok == 0 )); then
     no "generate_reports.sh: owner needs read AND execute; group AND other must have neither execute nor write (mode $m)"
   else
-    no "generate_reports.sh permissions are right but ownership is $o_user:$o_group, should be ubuntu:salesteam"
+    no "generate_reports.sh permissions are right but ownership is $o_user:$o_group, should be ${LAB_USER}:salesteam"
   fi
 else
   no "generate_reports.sh is missing from /salesteam"

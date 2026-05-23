@@ -112,28 +112,22 @@ if [[ -f "$SCRIPT" ]]; then
     # produces (not a stale file the student may have hand-edited).
     CHECK_OUT="${LABDIR}/.sysreport-check.csv"
     rm -f "$CHECK_OUT"
-    if "$SCRIPT" "$CHECK_OUT" >/dev/null 2>&1 && [[ -s "$CHECK_OUT" ]]; then
+    # Redirect stdin from /dev/null and cap the runtime so a student script that
+    # accidentally calls `read` (waiting for input) doesn't hang the checker.
+    if timeout 15 "$SCRIPT" "$CHECK_OUT" < /dev/null >/dev/null 2>&1 && [[ -s "$CHECK_OUT" ]]; then
       # The first field of the data row (line 2) should be the real hostname.
       data_host=$(sed -n '2p' "$CHECK_OUT" | cut -d, -f1)
       if [[ "$data_host" == "$HOST" ]]; then
-        ok "sysreport.sh is executable and produced a CSV with this machine's real hostname ($HOST)"
+        ok "sysreport.sh accepts an output-path argument and produced a CSV with this machine's real hostname ($HOST)"
       else
         no "sysreport.sh ran but its CSV hostname ('$data_host') does not match this machine ('$HOST') — use \$(hostname) in the script"
       fi
       rm -f "$CHECK_OUT"
     else
-      # Fall back to checking the student's default output file if the script
-      # ignores an argument, so a working-but-different script can still pass.
-      if [[ -s "${HOME}/sysreport.csv" ]]; then
-        data_host=$(sed -n '2p' "${HOME}/sysreport.csv" | cut -d, -f1)
-        if [[ "$data_host" == "$HOST" ]]; then
-          ok "sysreport.sh is executable and ~/sysreport.csv contains this machine's real hostname ($HOST)"
-        else
-          no "~/sysreport.csv hostname ('$data_host') does not match this machine ('$HOST') — use \$(hostname) in the script"
-        fi
-      else
-        no "sysreport.sh did not produce a usable CSV — it should write 'hostname,kernel,date' then a data row. Run ./sysreport.sh"
-      fi
+      # No fallback to a default ~/sysreport.csv on purpose: the README requires
+      # the script to accept the output path as \$1. A solution that ignores \$1
+      # misses the lesson and must FAIL here so the student fixes it.
+      no "sysreport.sh did not write to the path we gave it as \$1 — your script must accept the output path as its first argument (see the if-test in the README example)"
     fi
   else
     no "sysreport.sh exists but is not executable by its owner — run: chmod +x ~/sysreport.sh"
