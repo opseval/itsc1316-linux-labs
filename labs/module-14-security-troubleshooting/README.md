@@ -17,7 +17,7 @@ A previous administrator left this system in rough shape: a tool was given dange
 
 By the end of this lab you will be able to:
 
-- Reduce a system's attack surface by removing unnecessary privileges (SUID, world-writable files).
+- Reduce a system's **attack surface** (the parts of a system an attacker can reach) by removing unnecessary privileges (SUID, world-writable files).
 - Apply the principle of least privilege to a real file and a real service.
 - Inventory a system's **exposed network services** and reason about which are needed — recognizing that listening services are part of the attack surface.
 - Investigate a performance problem with evidence before changing anything.
@@ -71,7 +71,7 @@ The system now has four problems. You are not told exactly where they all are �
 Work like an administrator responding to a vague ticket: *"This machine feels slow and IT says it might not be secure."* Investigate first, then fix. The four issues, described at the level of symptoms an admin would actually notice:
 
 **1. A tool has been given dangerous privileges.**
-Somewhere under `/usr/local/bin` there is a custom helper that runs with **root privileges regardless of who launches it** (the SUID bit). That is a classic privilege-escalation risk. Find it and remove the unnecessary privilege.
+Somewhere under `/usr/local/bin` there is a custom helper that runs with **root privileges regardless of who launches it** (the SUID bit). That is a classic **privilege-escalation** risk — a way for an ordinary user to gain root power. Find it and remove the unnecessary privilege.
 
 > Hint: you can list every SUID file on the system with
 > `find / -perm -4000 -type f 2>/dev/null`. Most results are legitimate system binaries — your job is to spot the one that does not belong.
@@ -79,7 +79,11 @@ Somewhere under `/usr/local/bin` there is a custom helper that runs with **root 
 **2. A sensitive file is exposed.**
 There is payroll data on this system that the previous admin left readable and writable by everyone. Find it and apply least-privilege permissions so that **only root** can read or change it.
 
-> Hint: `sudo find / -perm -0002 -type f -not -path '/proc/*' -not -path '/sys/*' 2>/dev/null` lists world-writable files. The `-not -path` filters skip kernel pseudo-files in `/proc` and `/sys` (which are mode 0666 by design and aren't real files on disk) — without them you'll wade through ~2,000 lines of noise to find the one real answer.
+> Hint: list every world-writable file on the system:
+> ```
+> sudo find / -perm -0002 -type f -not -path '/proc/*' -not -path '/sys/*' 2>/dev/null
+> ```
+> The `-not -path` filters skip kernel files in `/proc` and `/sys` that are world-writable by design.
 
 **3. Something is eating the CPU.**
 Users report the machine is sluggish. Investigate with the process tools from Module 10 (`top`, `ps`, `pgrep`). Identify the runaway process — it is a "system optimizer" that should never have been installed — and stop it. (You do not need to permanently uninstall it for the check to pass; stopping it is enough, but think about how you would prevent it from coming back.)
@@ -87,7 +91,16 @@ Users report the machine is sluggish. Investigate with the process tools from Mo
 > The `pgrep -f` / `pkill -f` wrapper-shell gotcha from Module 10 applies here too: if you're driving via `multipass exec labvm -- bash -c '...'`, those flags may match the wrapping shell's own command line. Use `pgrep -x` against the executable name, or `ps -eo args | grep "/usr/local/bin/sysoptimizer" | grep -v grep`. If `pkill` makes your `exec` return non-zero, verify the kill worked with a separate `pgrep` rather than trusting the exit code.
 
 **4. A service keeps failing.**
-A service called `reportd` was configured to start at boot but it keeps failing. Use `systemctl status reportd` and `journalctl -u reportd` to find out *why* it fails — read the actual error, do not guess. Once you understand the root cause, **stop it and prevent it from auto-starting** with `sudo systemctl stop reportd && sudo systemctl disable reportd`. (Note: you may have seen `systemctl mask` mentioned for blocking a unit; `mask` works by creating a `/dev/null` symlink at the unit's path, which fails here because this lab's unit lives at `/etc/systemd/system/reportd.service` — `mask` refuses to overwrite an existing real file there. `mask` is appropriate for hiding distro-shipped units in `/lib/systemd/system/`; for locally-installed units like this one, `disable` is the right answer. If `systemctl --failed` still shows `reportd` after disable, run `sudo systemctl reset-failed reportd` to clear the sticky failure marker.) In your incident report, state the root cause in one sentence.
+A service called `reportd` was configured to start at boot but it keeps failing. Use `systemctl status reportd` and `journalctl -u reportd` to find out *why* it fails — read the actual error, do not guess. Once you understand the root cause, **stop it and prevent it from auto-starting:**
+
+```
+sudo systemctl stop reportd
+sudo systemctl disable reportd
+```
+
+If `systemctl --failed` still lists `reportd` afterwards, clear the sticky failure marker: `sudo systemctl reset-failed reportd`. In your incident report, state the root cause in one sentence.
+
+> **Why `disable` and not `mask` here?** `mask` blocks a unit by symlinking it to `/dev/null`. That works for distro-shipped units in `/lib/systemd/system/`, but this lab's unit lives at `/etc/systemd/system/reportd.service` — `mask` won't overwrite a real file there. For locally-installed units like this one, `disable` is the right call.
 
 **5. Survey the attack surface (assessment, not a fix).**
 A system's exposed network services are part of its attack surface — every service listening on a port is something an attacker could reach. Inventory what is listening:

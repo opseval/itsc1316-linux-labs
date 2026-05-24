@@ -145,7 +145,13 @@ sudo kill -9 [PID]       # sends SIGKILL (signal 9) — forced, non-negotiable
 pgrep -af labhog-runaway     # no output = it's stopped
 ```
 
-> **A `pgrep` / `pkill` gotcha for wrapper shells.** If you're driving labvm from a host wrapper (`multipass exec labvm -- bash -c '... pgrep -af labhog-runaway ...'`, an automation script, or `ssh -T`), the literal string `labhog-runaway` appears in the wrapping bash's command line, so `pgrep -af` matches the wrapper too and returns a false-positive. To check just the real process, use `pgrep -x labhog-runaway` (exact match against the executable name) or `ps -eo args | grep "/usr/local/bin/labhog-runaway" | grep -v grep`. Same applies to `pkill -f` — it may signal the wrapping shell and make your `exec` return non-zero even though the kill worked.
+> **`pgrep -f` / `pkill -f` gotcha — skip unless you're driving labvm from outside.**
+>
+> If you ran the `pgrep`/`pkill` above by typing them inside `multipass shell labvm`, this doesn't affect you. It only bites when you drive the VM through a wrapping shell — `multipass exec labvm -- bash -c '...'`, `ssh -T`, or an automation script.
+>
+> **The problem:** the search string (`labhog-runaway`) appears in the wrapping shell's own command line, so `pgrep -af` matches the wrapper itself and reports a false hit. Worse, `pkill -f` may *signal the wrapping shell*, killing your `multipass exec` and making it return non-zero — even though the real target was killed correctly.
+>
+> **The fix:** use `pgrep -x labhog-runaway` (exact match against the executable name), or `ps -eo args | grep "/usr/local/bin/labhog-runaway" | grep -v grep`. If `pkill` returns non-zero, verify the kill worked with a separate `pgrep` rather than trusting the exit code.
 
 In your report, fill in the **process name**, its **PID**, and the **command you used to find it**.
 

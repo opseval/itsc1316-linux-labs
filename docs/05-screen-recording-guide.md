@@ -16,15 +16,23 @@ Every lab grader is looking for the same three things on screen, in this exact o
 
 That sequence alone is enough to satisfy [Criterion 2](04-grading-rubric.md#criterion-2--screen-recording) of the rubric. Anything before / after is optional. **Webcam OFF; narration optional.**
 
-> **About the integrity line.** The check script auto-fetches `labs/CHECKSUMS.txt` from the canonical GitHub raw URL, compares it against the script's own SHA256, and prints one of three results: `INTEGRITY: VERIFIED` (good), `INTEGRITY: *** MISMATCH ***` (you edited the script — academic-integrity 0), or `INTEGRITY: UNKNOWN` (one of: VM couldn't reach GitHub, the script's path is missing from `CHECKSUMS.txt`, or no `sha256sum`/`shasum` — the script's own UNKNOWN message names the cause; fix it and re-record). **Do not edit the check script.** If you did by accident, replace it with a fresh copy — for example, for the Module 6 check script:
+> **About the integrity line.**
+>
+> The check script compares its own SHA256 against the canonical one published in the course repo and prints one of three results:
+>
+> - **`INTEGRITY: VERIFIED`** — your local script matches. This is what the grader looks for.
+> - **`INTEGRITY: *** MISMATCH ***`** — the script was edited. **A recorded MISMATCH scores the whole submission 0** (academic integrity).
+> - **`INTEGRITY: UNKNOWN`** — the VM couldn't reach GitHub, the script's path is missing from `CHECKSUMS.txt`, or `sha256sum`/`shasum` isn't installed. The script's own message names which one.
+>
+> **Do not edit the check script.** If you did by accident, replace it with a fresh copy and re-record *before submitting* — a recorded MISMATCH cannot be undone after the fact. For the Module 6 check script:
 >
 > ```
 > rm check-users.sh
 > curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-06-users-and-permissions/check-users.sh
-> bash check-users.sh   # the integrity block at the top should now read VERIFIED
+> bash check-users.sh   # should now read VERIFIED
 > ```
 >
-> (Use the right path/filename for the lab you're on; each per-lab README shows the exact URL.) A `MISMATCH` recorded on the submission scores the whole thing 0.
+> (Use the lab's own URL — each per-lab README has it.)
 
 > **Why "continuous take"?** A stitched recording could be assembled from multiple machines, multiple runs, or someone else's work. A single take with your live hostname is the simplest credible proof the work happened on your machine just now.
 

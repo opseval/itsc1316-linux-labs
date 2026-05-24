@@ -4,7 +4,13 @@
 
 ## Lab Overview
 
-Installing and updating software, and bundling files into archives for backup or transfer, are two of the most routine things a Linux administrator does. In this lab you will use Ubuntu's package manager (APT) the way professionals do: refresh the package index, search for and install a tool from a trusted repository, inspect what it installed and where, then remove it cleanly. You will then do something that is often confused with installing software but is actually a completely separate skill — **archiving**: bundling a directory into a compressed `.tar.gz`, listing what's inside it, and extracting it somewhere else. By the end you'll be able to explain *why* package-managed software is safer than a binary you download off a random website, and when an archive is the right tool instead.
+Installing software and bundling files into archives are two of the most routine jobs a Linux admin does. In this lab you will do both.
+
+First, you'll use Ubuntu's package manager (APT) the way professionals do: refresh the package index, search for a tool, install it from a trusted repository, inspect what it installed, then remove it cleanly.
+
+Then you'll do something that's often confused with installing software but is actually a separate skill — **archiving**. You'll bundle a directory into a compressed `.tar.gz`, list what's inside, and extract it somewhere else.
+
+By the end you'll be able to explain *why* package-managed software is safer than a binary you download off a random website, and when an archive is the right tool instead.
 
 |  |  |
 | --- | --- |

@@ -83,6 +83,8 @@ Answer in your writeup:
 
 ## Part B — Connectivity vs. Name Resolution (the core of the lab)
 
+Two different things, often confused: **connectivity** = can my packets actually reach that IP address? **Name resolution** = can I look up the *name* and get the right IP back? Either can fail without the other.
+
 You are going to see the same host succeed one way and fail another. Pay attention — this distinction is the whole lesson.
 
 1. **Reach `fileserver` by its real IP** (use the IP you wrote down from `multipass list`):
@@ -126,7 +128,11 @@ You are going to see the same host succeed one way and fail another. Pay attenti
 
 > **Why `/etc/hosts`?** It is the system's local, persistent name-to-IP map, checked before DNS. It survives reboots — unlike a route you add by hand at the command line, which disappears. Understanding what is persistent vs. runtime is exactly the kind of thing that bites administrators when "it worked until I rebooted."
 
-> **About the `manage_etc_hosts:` header in `/etc/hosts`.** On a Multipass Ubuntu cloud image, the top of `/etc/hosts` may say something like `# Your system has configured 'manage_etc_hosts' as True. As a result, if you wish for changes to this file to persist then you will need to either …`. On these images the cloud-init module typically only manages the loopback (`127.0.0.1`) and FQDN lines, so your added `fileserver` line below those *does* persist across reboot — but if you ever see your `/etc/hosts` edit reverted after `multipass restart`, look at `/etc/cloud/cloud.cfg.d/*.cfg` to see what cloud-init is configured to manage.
+> **About the warning at the top of `/etc/hosts`.**
+>
+> **What it says:** "if you wish for changes to this file to persist then you will need to either …" — this comes from **cloud-init** (the tool that customizes cloud VMs on first boot).
+>
+> **What it means here:** On Multipass Ubuntu images, cloud-init typically only manages the loopback (`127.0.0.1`) and FQDN/hostname lines at the top. Your `fileserver` line further down survives reboots fine. If a future edit ever does get reverted after `multipass restart`, check `/etc/cloud/cloud.cfg.d/*.cfg` to see what cloud-init is configured to manage.
 
 ---
 

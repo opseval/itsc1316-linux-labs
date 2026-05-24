@@ -70,7 +70,7 @@ systemctl list-units --type=service # just the services, with their state
 systemctl get-default               # the target the system boots into
 ```
 
-> **Why this matters.** Run `systemctl get-default` to see what your VM uses. On a fresh server install this is usually `multi-user.target`, but the default Multipass Ubuntu 22.04 cloud image keeps the symlink at `graphical.target` even though no graphical desktop is installed — either value is valid here because there is no display manager to run. Headless server design saves RAM, reduces attack surface, and avoids running a graphics stack (X Windows) nobody is sitting in front of. A real desktop machine would default to `graphical.target` *and* have GNOME/KDE running on top of it. Note in your report which target your VM uses and why a server admin would keep it headless.
+> **Why this matters.** A server admin picks **`multi-user.target`** (text-only, headless) over `graphical.target` to save RAM, reduce **attack surface** (fewer services = less to attack), and skip a desktop nobody is sitting in front of. Both values appear on Multipass Ubuntu 22.04 — the image is technically `graphical.target` but no GUI ever runs, because there's no display manager to launch one. Either is fine here. Note in your report which target your VM shows and why a server admin keeps it headless.
 
 ### Part 2 — Examine boot performance
 
@@ -154,7 +154,13 @@ sudo timedatectl set-timezone America/Chicago
 timedatectl                       # confirm "Time zone: America/Chicago"
 ```
 
-> **Why this matters.** The timezone changes what *every* program thinks "now" is — log timestamps, cron schedules, `date`. The locale (`LANG`, e.g. `C.UTF-8` on default Multipass images, or `en_US.UTF-8` on many other Ubuntu builds — yours may differ) changes how programs sort text, format numbers and dates, and which language messages appear in. An admin who sets the wrong locale can break scripts that parse dates or sort output, and confuse users who expect their own conventions. You do **not** need to change the locale — just inspect it with `localectl` and capture the output. In your report, explain in your own words one concrete way a wrong timezone *or* locale would mislead a user or break a script.
+> **Why this matters.**
+>
+> **Timezone** changes what *every* program thinks "now" is — log timestamps, cron schedules, `date` output. A wrong timezone makes your logs lie about when things happened.
+>
+> **Locale** (`LANG`) changes how programs sort text, format numbers and dates, and which language error messages appear in. A wrong locale can break scripts that parse dates (German date format ≠ US date format) and confuse users who expect their own conventions.
+>
+> You do **not** need to change the locale here — just inspect it with `localectl`. In your report, explain one concrete way a wrong timezone *or* locale would mislead a user or break a script.
 
 ### Part 6 — Assemble your evidence report
 

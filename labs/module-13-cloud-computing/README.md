@@ -4,7 +4,7 @@
 
 ## Lab Overview
 
-In the cloud, nobody installs a server by hand and clicks through menus. You hand the provider a **declarative config** describing the server you want, and the machine builds itself on first boot: creates users, installs SSH keys, installs software, starts services. The standard for this is **cloud-init**, and the same file format works on AWS, Google Cloud, Azure, Oracle Cloud, DigitalOcean — and Multipass. That is what you will use here.
+In the cloud, nobody installs a server by hand and clicks through menus. You hand the provider a **declarative config** (one file that describes the server you want, instead of a manual click-through setup) and the machine builds itself on first boot: creates users, installs SSH keys, installs software, starts services. The standard for this is **cloud-init** — the tool that reads that config and applies it the first time the VM boots. The same file format works on AWS, Google Cloud, Azure, Oracle Cloud, DigitalOcean — and Multipass. That is what you will use here.
 
 You will write a cloud-init config that, on first boot, creates a key-only login user, installs a web server, and serves a page you personalized — all automatically. Then (optionally) you will prove it is truly platform-agnostic by running the *exact same config* on a real free-tier cloud instance.
 
