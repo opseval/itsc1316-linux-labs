@@ -55,7 +55,7 @@ getent hosts ubuntu.com # FAILS  -> DNS/VPN problem
 3. **Enable split tunneling** if your VPN allows it, excluding the Multipass subnet (the `10.x` / `192.168.x` network shown in `multipass list`). Note: many school/corporate VPNs forbid split tunneling by policy — if so, skip to option 5.
 4. **macOS + Cisco AnyConnect specifically:** AnyConnect is well known for hijacking routing in a way Multipass can't work around. If your situation allows it, the friendlier `OpenConnect` client (`brew install openconnect`) often coexists with Multipass; otherwise use option 5.
 5. **Do the labs off the VPN.** If you don't need the VPN for the lab itself, disconnect it while you work, then reconnect. Nothing in these labs requires the campus/work VPN.
-6. **Last resort — use the cloud fallback.** If you can't get a working VM behind a mandatory always-on VPN, do the labs on a free cloud instance instead (see [Setup Guide, Part 6](01-multipass-setup-guide.md)). The lab commands are identical there.
+6. **Last resort — use the cloud fallback.** If you can't get a working VM behind a mandatory always-on VPN, do the labs on a free cloud instance instead (see [Setup Guide, Part 7](01-multipass-setup-guide.md)). The lab commands are identical there.
 
 > The Preflight Check's "internet name resolution" test exists specifically to catch this in week 1 — long before it can affect a grade. If that test fails, work through this section before assignments begin.
 
@@ -159,7 +159,7 @@ Post in the **Q&A Discussion Board** with all of the following — it's the diff
 4. The output of `multipass version` and `multipass list`.
 5. What you've already tried from this guide.
 
-If the issue is clearly environmental and you've exhausted section 2, remember the **cloud fallback** in [Setup Guide, Part 6](01-multipass-setup-guide.md) — you will never be blocked from coursework by a laptop or a VPN.
+If the issue is clearly environmental and you've exhausted section 2, remember the **cloud fallback** in [Setup Guide, Part 7](01-multipass-setup-guide.md) — you will never be blocked from coursework by a laptop or a VPN.
 
 ---
 

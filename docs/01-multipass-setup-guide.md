@@ -68,7 +68,7 @@ multipass list
 
 You should see `labvm` as `Running` with an IPv4 address.
 
-> **Low on resources?** Drop to `--memory 1G` if your laptop struggles with 2 GB. If your machine genuinely cannot run a VM at all, see **Part 6 — Cloud Fallback** below; you will not be penalized for hardware you do not have.
+> **Low on resources?** Drop to `--memory 1G` if your laptop struggles with 2 GB. If your machine genuinely cannot run a VM at all, see **Part 7 — Cloud Fallback** below; you will not be penalized for hardware you do not have.
 
 ### 2b. (Optional) Launch the `workstation` VM — only if you want the portfolio/git track
 
