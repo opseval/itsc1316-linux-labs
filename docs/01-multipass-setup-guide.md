@@ -224,7 +224,7 @@ Recommended free options:
 
 - **Oracle Cloud Always Free** — up to 4 ARM cores and 24 GB RAM, free with no time limit. The best free option. Signup requires a credit card for verification (no charge).
 - **GitHub Student Developer Pack** — verify with your ACES student email and get $200 in DigitalOcean credit (≈ 4 years of a basic VM).
-- **Ask me** — if neither works for you, contact me and we will arrange access. Nobody is blocked from this course for lack of hardware.
+- **Ask your instructor** — if neither works for you, contact your instructor in week 1 to discuss options.
 
 Once you have a cloud Ubuntu 22.04 instance, you connect with `ssh` instead of `multipass shell`, and the per-lab `curl` commands work exactly the same way (they're fetching from `raw.githubusercontent.com`, which any Linux box can reach). Everything inside the VM is identical.
 

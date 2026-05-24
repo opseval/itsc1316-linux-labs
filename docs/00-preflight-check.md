@@ -78,4 +78,4 @@ Take a **screenshot of the summary block** at the end (the part that says `Passe
 
 ## If your computer simply can't run a VM
 
-Some machines — locked-down work laptops, very old hardware, certain Chromebooks — genuinely cannot run Multipass. **You are not stuck and you will not be penalized.** Go to **Part 7 — Cloud Fallback** in the [Setup Guide](01-multipass-setup-guide.md): you can do every lab on a free cloud VM instead, using the same commands. If the cloud options do not work for you either, contact your instructor in week 1 and we will arrange access. The only wrong move is to wait until the work is due to find out.
+Some machines — locked-down work laptops, very old hardware, certain Chromebooks — genuinely cannot run Multipass. **You are not stuck and you will not be penalized.** Go to **Part 7 — Cloud Fallback** in the [Setup Guide](01-multipass-setup-guide.md): you can do every lab on a free cloud VM instead, using the same commands. If the cloud options do not work for you either, contact your instructor in week 1 to discuss options. The only wrong move is to wait until the work is due to find out.
