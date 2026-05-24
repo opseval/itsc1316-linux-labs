@@ -21,7 +21,7 @@ VM hostname (run `hostname`):
 --- Part A: Identifying this machine on the network ---
 Primary network interface name (from `ip a`):       <fill in>
 This VM's IP address (from `ip a` or `hostname -I`): <fill in>
-Paste the relevant line(s) of `ip a` here:
+Paste the relevant line(s) of `ip a` here (the whole `enp0s1` stanza is fine — link, mac, inet, inet6, valid_lft — 4-5 lines):
 <paste>
 
 --- Part B: How traffic leaves this machine ---

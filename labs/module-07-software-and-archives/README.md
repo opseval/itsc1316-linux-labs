@@ -40,7 +40,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-07-software-and-archives/setup-software.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-07-software-and-archives/check-software.sh
-less setup-software.sh check-software.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-software.sh
 ```
 
@@ -97,7 +96,9 @@ ls /etc/apt/sources.list.d/
 
 Pick **one** small, safe package to install. Any of these work: `tree`, `cowsay`, `htop`, `sl`, `figlet`, `ncdu`. The examples below use `tree`; substitute your choice everywhere.
 
-Search for it, then install it:
+> Some Multipass Ubuntu images ship with `htop` already installed — check first with `dpkg -l [candidate]` and pick a different package if your candidate is already there. Otherwise you can't demonstrate the install/remove arc.
+
+Search for it, then install it. (`apt search` matches package descriptions too, so it can be noisy — narrow with `apt search ^tree$` or `apt search tree | grep '^tree/'` if you want just the package name. Also: every `apt` command prints `WARNING: apt does not have a stable CLI interface. Use with caution in scripts.` — that's a note for script writers, safe to ignore.)
 
 ```
 apt search tree
@@ -107,7 +108,7 @@ sudo apt install tree
 Verify it actually installed, and find where the runnable command lives:
 
 ```
-dpkg -l | grep tree
+dpkg -l tree
 which tree
 ```
 
@@ -116,7 +117,7 @@ Now **use** it (prove it works) and capture that in your report:
 ```
 tree ~/projectfiles
 echo "=== I installed and used 'tree' ===" >> ~/module7-software-report.txt
-dpkg -l | grep tree >> ~/module7-software-report.txt
+dpkg -l tree >> ~/module7-software-report.txt
 ```
 
 > **Why apt is safer than a random binary.** When you `sudo apt install` something, APT pulls it from a repository, **verifies its cryptographic signature**, tracks every file it installs, resolves its dependencies, and can update or remove it later. A binary you download from a website and `chmod +x` has none of that: no signature check, no dependency tracking, no clean removal, and no idea whether it's malicious. You'll write about this below.
@@ -147,7 +148,7 @@ Now remove it. Clean removal is one of the biggest advantages of a package manag
 
 ```
 sudo apt remove tree
-dpkg -l | grep tree   # should now show no 'ii' installed line for tree
+dpkg -l tree   # after remove, this prints "No packages found matching tree" and exits non-zero — that's the proof it's gone
 ```
 
 > The check script confirms your chosen package is **no longer installed** *and* that your report names it — proof you installed it, used it, then removed it.
@@ -291,7 +292,7 @@ The *concepts* are identical — repositories, signed packages, a package manage
 | Remove | `sudo apt remove tree` | `sudo dnf remove tree` |
 | Show package info | `apt show tree` | `dnf info tree` |
 | List installed files | `dpkg -L tree` | `rpm -ql tree` |
-| Is it installed? | `dpkg -l | grep tree` | `rpm -q tree` |
+| Is it installed? | `dpkg -l tree` | `rpm -q tree` |
 | Repo config lives in | `/etc/apt/sources.list[.d]` | `/etc/yum.repos.d/*.repo` |
 
 The **archiving** half of this lab (`tar`, gzip, compressed `.tar.gz`) is **exactly the same** on every Linux distribution — `tar` is core Linux, not tied to any package manager.

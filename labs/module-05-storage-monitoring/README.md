@@ -40,7 +40,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-05-storage-monitoring/setup-storage.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-05-storage-monitoring/check-storage.sh
-less setup-storage.sh check-storage.sh     # inspect before running anything as root; press q to exit
 bash setup-storage.sh
 ```
 
@@ -106,6 +105,8 @@ Inside `~/bigdata` the setup planted one deliberately large file. Use `find` wit
 ```
 find ~ -type f -size +100M 2>/dev/null
 ```
+
+> If `find` returns nothing, you may have skipped `bash setup-storage.sh` — go back and run it. Also: `-size +100M` is a strict comparison, so `+200M` would NOT find the planted 200M file.
 
 Record the **path and size** of the large file you found into your report:
 

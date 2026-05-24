@@ -53,7 +53,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-13-advanced-networking/setup-net.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-13-advanced-networking/check-net.sh
-less setup-net.sh check-net.sh     # inspect before running anything as root; press q to exit
 ```
 
 ### 3. Plant the scenario (inside labvm)
@@ -89,7 +88,7 @@ You are going to see the same host succeed one way and fail another. Pay attenti
 1. **Reach `fileserver` by its real IP** (use the IP you wrote down from `multipass list`):
 
    ```
-   ping -c 3 <fileserver-ip>
+   ping -c 3 [fileserver-ip]
    ```
 
    This should succeed. **Conclusion to record:** basic network connectivity between the two VMs is fine.
@@ -127,6 +126,8 @@ You are going to see the same host succeed one way and fail another. Pay attenti
 
 > **Why `/etc/hosts`?** It is the system's local, persistent name-to-IP map, checked before DNS. It survives reboots — unlike a route you add by hand at the command line, which disappears. Understanding what is persistent vs. runtime is exactly the kind of thing that bites administrators when "it worked until I rebooted."
 
+> **About the `manage_etc_hosts:` header in `/etc/hosts`.** On a Multipass Ubuntu cloud image, the top of `/etc/hosts` may say something like `# Your system has configured 'manage_etc_hosts' as True. As a result, if you wish for changes to this file to persist then you will need to either …`. On these images the cloud-init module typically only manages the loopback (`127.0.0.1`) and FQDN lines, so your added `fileserver` line below those *does* persist across reboot — but if you ever see your `/etc/hosts` edit reverted after `multipass restart`, look at `/etc/cloud/cloud.cfg.d/*.cfg` to see what cloud-init is configured to manage.
+
 ---
 
 ## Part C — Confirm DNS still works
@@ -138,7 +139,9 @@ getent hosts ubuntu.com
 ping -c 2 ubuntu.com
 ```
 
-If external names resolve, your global DNS is healthy and your `/etc/hosts` change was correctly scoped to just `fileserver`.
+`getent` is the authoritative test — if it returns IPs, your global DNS is healthy and your `/etc/hosts` change was correctly scoped to just `fileserver`.
+
+> **Heads-up — Multipass on macOS drops outbound ICMP.** If `ping -c 2 ubuntu.com` returns 100% loss but the `PING ubuntu.com (185.x.x.x)` header line shows a resolved IP, that's the same macOS-NAT ICMP-filter you saw in Module 9 — not a DNS failure. The lab still passes because the check uses `getent`. Add a one-line note in your writeup that ICMP was filtered.
 
 ---
 
@@ -157,12 +160,12 @@ A networked machine doesn't just *reach* other hosts — it also *offers* servic
 2. **Runtime vs. persistent — see the difference directly.** Add a temporary route at the command line, confirm it exists, then understand that it will not survive a reboot:
 
    ```
-   sudo ip route add 198.51.100.0/24 via <your-default-gateway>
+   sudo ip route add 198.51.100.0/24 via [your-default-gateway]
    ip route | grep 198.51.100
-   sudo ip route del 198.51.100.0/24 via <your-default-gateway>
+   sudo ip route del 198.51.100.0/24 via [your-default-gateway]
    ```
 
-   That `ip route add` is a **runtime** change — gone on reboot. Contrast it with the `/etc/hosts` edit you made in Part B, which is **persistent** because it lives in a config file. On Ubuntu, persistent interface configuration lives in **netplan** (`/etc/netplan/*.yaml`); look at that file (`cat /etc/netplan/*.yaml`) but do **not** edit it in this lab — a bad netplan change can cut off your VM's network.
+   That `ip route add` is a **runtime** change — gone on reboot. Contrast it with the `/etc/hosts` edit you made in Part B, which is **persistent** because it lives in a config file. On Ubuntu, persistent interface configuration lives in **netplan** (`/etc/netplan/*.yaml`); look at that file (`sudo cat /etc/netplan/*.yaml` — needs sudo because netplan files can contain credentials, so they're mode `0600 root:root` by default) but do **not** edit it in this lab — a bad netplan change can cut off your VM's network.
 
 > **Why this matters:** "It worked until I rebooted" is one of the most common networking tickets. It almost always means someone made a runtime change and never made it persistent. Knowing which changes survive a reboot — and where persistent config lives — is exactly the judgment this distinction builds.
 

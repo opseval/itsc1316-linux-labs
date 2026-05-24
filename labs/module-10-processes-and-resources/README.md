@@ -50,7 +50,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-10-processes-and-resources/setup-processes.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-10-processes-and-resources/check-processes.sh
-less setup-processes.sh check-processes.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-processes.sh
 ```
 
@@ -115,13 +114,15 @@ uptime >> ~/module10-process-report.txt
 
 ## Part 3 — Find and stop the runaway process (the incident)
 
-Users report the VM is sluggish. **Investigate before you act.** Run `top` and watch the top of the list sorted by CPU — one process named **`labhog-runaway`** will be pinned near 100% CPU. Confirm it and get its **PID** several ways:
+Users report the VM is sluggish. **Investigate before you act.** Run `top` and watch the top of the list sorted by CPU — one process pegged near 100% CPU is the runaway. Confirm it and get its **PID** several ways:
 
 ```
 top                              # the hog sits at the top by %CPU
 ps aux | grep labhog-runaway     # shows the owner and PID
 pgrep -af labhog-runaway         # PID + full command line
 ```
+
+> In `top`'s default view the COMMAND column shows `bash`, not `labhog-runaway`, because the runaway is a *shell script* and `top` shows its interpreter. Press `c` inside `top` to toggle the full command line and you'll see `bash /usr/local/bin/labhog-runaway`. `ps aux` and `pgrep -af` show the full command line by default — that's why those flush out the script's name even though `top` looked uninformative at first.
 
 Record what you found *before* killing it:
 
@@ -133,9 +134,9 @@ pgrep -af labhog-runaway >> ~/module10-process-report.txt
 Now stop it. First try a polite **SIGTERM** (the default signal — asks the process to shut down cleanly); fall back to **SIGKILL** (`-9`) only if it ignores you:
 
 ```
-sudo kill <PID>          # sends SIGTERM (signal 15) — the polite request
+sudo kill [PID]          # sends SIGTERM (signal 15) — the polite request
 # if it's still there after a moment:
-sudo kill -9 <PID>       # sends SIGKILL (signal 9) — forced, non-negotiable
+sudo kill -9 [PID]       # sends SIGKILL (signal 9) — forced, non-negotiable
 ```
 
 (Because this hog is a tight `while true` loop, SIGTERM stops it fine — but you should understand both.) Verify it's gone:
@@ -143,6 +144,8 @@ sudo kill -9 <PID>       # sends SIGKILL (signal 9) — forced, non-negotiable
 ```
 pgrep -af labhog-runaway     # no output = it's stopped
 ```
+
+> **A `pgrep` / `pkill` gotcha for wrapper shells.** If you're driving labvm from a host wrapper (`multipass exec labvm -- bash -c '... pgrep -af labhog-runaway ...'`, an automation script, or `ssh -T`), the literal string `labhog-runaway` appears in the wrapping bash's command line, so `pgrep -af` matches the wrapper too and returns a false-positive. To check just the real process, use `pgrep -x labhog-runaway` (exact match against the executable name) or `ps -eo args | grep "/usr/local/bin/labhog-runaway" | grep -v grep`. Same applies to `pkill -f` — it may signal the wrapping shell and make your `exec` return non-zero even though the kill worked.
 
 In your report, fill in the **process name**, its **PID**, and the **command you used to find it**.
 
@@ -155,16 +158,16 @@ Not every busy process should be killed — sometimes you just want it to **yiel
 ```
 nice -n 10 sleep 300 &        # start a process with niceness +10
 jobs -l                       # note its PID (or use: pgrep -af 'sleep 300')
-ps -o pid,ni,cmd -p <PID>     # confirm the NI (niceness) column shows 10
-sudo renice -n 15 -p <PID>    # raise its niceness to +15
+ps -o pid,ni,cmd -p [PID]     # confirm the NI (niceness) column shows 10
+sudo renice -n 15 -p [PID]    # raise its niceness to +15
 ```
 
 Capture the nice/renice evidence:
 
 ```
 echo "=== nice / renice ===" >> ~/module10-process-report.txt
-ps -o pid,ni,cmd -p <PID> >> ~/module10-process-report.txt
-sudo renice -n 15 -p <PID> >> ~/module10-process-report.txt
+ps -o pid,ni,cmd -p [PID] >> ~/module10-process-report.txt
+sudo renice -n 15 -p [PID] >> ~/module10-process-report.txt
 ```
 
 (`renice` prints a line like `old priority 10, new priority 15`.) You can let the `sleep` finish on its own or `kill` it when done.

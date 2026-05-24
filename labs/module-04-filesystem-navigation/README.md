@@ -41,7 +41,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-04-filesystem-navigation/setup-filesystem.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-04-filesystem-navigation/check-filesystem.sh
-less setup-filesystem.sh check-filesystem.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-filesystem.sh
 ```
 
@@ -66,6 +65,8 @@ ls /usr/bin | head  # installed programs (binaries)
 ```
 
 For each of the four directories below, find **one real file** that lives there (the example commands suggest one). You will record these in your evidence file in Part 5.
+
+> **Heads-up on residue.** If you completed Module 2, `ls /home` will show `devops1` and `devops2` in addition to `ubuntu` — that's expected. Snap-packaged programs also bundle their own copies of system files, so later when you search for `hostname` you'll see multiple paths under `/snap/...` — the one that matters is `/etc/hostname`.
 
 | Directory | Role | Find an example with |
 | --- | --- | --- |
@@ -154,7 +155,7 @@ Both `pwd` outputs are identical — but only the relative one depends on where 
 find ~ -name "*.sh" > ~/results
 ```
 
-`cat ~/results` should list at least the two scripts you moved into `~/Documents/scripts`.
+`cat ~/results` should list at least the two scripts you moved into `~/Documents/scripts`. If you've already completed Labs 1–3, the list will also include the setup/check scripts from those — that's fine.
 
 **4b.** Now search the whole system for files named `hostname`, sending **results** to your file (appending) and **errors** to a separate place so permission-denied noise does not mix in:
 
@@ -162,7 +163,7 @@ find ~ -name "*.sh" > ~/results
 find / -name "hostname" >> ~/results 2> ~/find-errors.log
 ```
 
-`cat ~/results` now also includes `/etc/hostname` (and possibly others). `cat ~/find-errors.log` shows the permission errors that were kept out of your results — the same stdout/stderr separation idea from Module 3, applied to a real search.
+`cat ~/results` now also includes `/etc/hostname` (and possibly others). `cat ~/find-errors.log` shows the permission errors that were kept out of your results — the same stdout/stderr separation idea from Module 3, applied to a real search. Expect a few hundred `Permission denied` lines in the error log; that's normal output from `find /` as a regular user. Don't `sudo` this `find` — the permission errors are part of what we're demonstrating.
 
 > **Why this matters:** real searches generate noise. Redirecting errors away from results is how you get a clean list you can act on, instead of one buried in "Permission denied".
 

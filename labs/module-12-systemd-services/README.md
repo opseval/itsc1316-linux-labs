@@ -49,7 +49,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-12-systemd-services/setup-systemd.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-12-systemd-services/check-systemd.sh
-less setup-systemd.sh check-systemd.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-systemd.sh
 ```
 
@@ -71,7 +70,7 @@ systemctl list-units --type=service # just the services, with their state
 systemctl get-default               # the target the system boots into
 ```
 
-> **Why this matters.** `systemctl get-default` will almost certainly print `multi-user.target` — your VM has **no graphical desktop**. That is deliberate: servers run "headless" to save RAM, reduce attack surface, and avoid running a graphics stack (X Windows) nobody is sitting in front of. A desktop machine would instead default to `graphical.target`, which *pulls in* `multi-user.target` and then layers the display manager on top. Note in your report which target your VM uses and why a server admin would keep it that way.
+> **Why this matters.** Run `systemctl get-default` to see what your VM uses. On a fresh server install this is usually `multi-user.target`, but the default Multipass Ubuntu 22.04 cloud image keeps the symlink at `graphical.target` even though no graphical desktop is installed — either value is valid here because there is no display manager to run. Headless server design saves RAM, reduces attack surface, and avoids running a graphics stack (X Windows) nobody is sitting in front of. A real desktop machine would default to `graphical.target` *and* have GNOME/KDE running on top of it. Note in your report which target your VM uses and why a server admin would keep it headless.
 
 ### Part 2 — Examine boot performance
 
@@ -148,14 +147,14 @@ timedatectl                       # current time, timezone, NTP sync
 localectl                         # system locale (LANG) and keyboard layout
 ```
 
-Now set the timezone to **America/Chicago** (Central Time — the region this course runs in) and confirm it:
+Now set the timezone to **America/Chicago** (Central Time — the region this course runs in) and confirm it. (`set-timezone` is idempotent — if your VM is already on `America/Chicago` from a prior lab or a previous run, re-running the command is a harmless no-op, not an error.)
 
 ```
 sudo timedatectl set-timezone America/Chicago
 timedatectl                       # confirm "Time zone: America/Chicago"
 ```
 
-> **Why this matters.** The timezone changes what *every* program thinks "now" is — log timestamps, cron schedules, `date`. The locale (`LANG`, e.g. `en_US.UTF-8`) changes how programs sort text, format numbers and dates, and which language messages appear in. An admin who sets the wrong locale can break scripts that parse dates or sort output, and confuse users who expect their own conventions. You do **not** need to change the locale — just inspect it with `localectl` and capture the output. In your report, explain in your own words one concrete way a wrong timezone *or* locale would mislead a user or break a script.
+> **Why this matters.** The timezone changes what *every* program thinks "now" is — log timestamps, cron schedules, `date`. The locale (`LANG`, e.g. `C.UTF-8` on default Multipass images, or `en_US.UTF-8` on many other Ubuntu builds — yours may differ) changes how programs sort text, format numbers and dates, and which language messages appear in. An admin who sets the wrong locale can break scripts that parse dates or sort output, and confuse users who expect their own conventions. You do **not** need to change the locale — just inspect it with `localectl` and capture the output. In your report, explain in your own words one concrete way a wrong timezone *or* locale would mislead a user or break a script.
 
 ### Part 6 — Assemble your evidence report
 
@@ -215,9 +214,12 @@ C. Your service
    actually ran (quote the line you saw).
 
 D. Graphical vs text environments
-   Your VM defaults to multi-user.target (no X Windows). Give one advantage and
-   one disadvantage of running a server *without* a graphical desktop, and say
-   why most production servers run headless.
+   Your VM has no graphical desktop installed (regardless of whether
+   `systemctl get-default` reports multi-user.target or graphical.target —
+   both are valid on a headless cloud image because no display manager is
+   running). Give one advantage and one disadvantage of running a server
+   *without* a graphical desktop, and say why most production servers run
+   headless.
 
 E. Localization
    You set the timezone to America/Chicago. Describe one concrete way an

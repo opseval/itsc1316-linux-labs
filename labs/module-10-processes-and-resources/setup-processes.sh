@@ -84,8 +84,8 @@ EOF
 fi
 
 echo
-echo "[setup] Done. A runaway process named 'labhog-runaway' is now burning CPU"
-echo "        (started with PID ${HOG_PID})."
-echo "        Your job: FIND it with top/ps, then STOP it with kill."
+echo "[setup] Done. A runaway process is now burning CPU on this VM."
+echo "        (PID withheld — finding it with top/ps/pgrep IS the lab.)"
+echo "        Your job: FIND it, then STOP it with kill."
 echo "        Starter evidence report: ${REPORT}"
 echo "        Grade yourself when finished with:  bash check-processes.sh"

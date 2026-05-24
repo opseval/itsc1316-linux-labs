@@ -35,3 +35,10 @@ desktop.ini
 scratch/
 tmp/
 *.log
+
+# --- UAT / persona test run (never commit) ---
+# Per-lab reports + captured terminal output from the end-to-end
+# student-persona walkthrough. Used to evaluate the labs from a
+# first-time student's perspective; not part of the instructional
+# materials.
+test/

@@ -39,10 +39,10 @@ packages:
 # also reaches "cloud-init done").
 write_files:
   - path: /etc/itsc1316-cloud-init-applied
-    permissions: '0644'
+    permissions: '644'
     content: "ITSC-1316 module 13 cloud-init was applied on first boot.\n"
   - path: /var/www/html/index.html
-    permissions: '0644'
+    permissions: '644'
     content: |
       <!DOCTYPE html>
       <html>

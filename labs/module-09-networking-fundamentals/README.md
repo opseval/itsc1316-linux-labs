@@ -39,7 +39,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-09-networking-fundamentals/setup-netfund.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-09-networking-fundamentals/check-netfund.sh
-less setup-netfund.sh check-netfund.sh     # inspect before running anything; press q to exit
 bash setup-netfund.sh
 ```
 
@@ -74,12 +73,16 @@ Find the line that starts with `default`. The address after `via` is your **defa
 This is the most important habit in the lab. Test from closest to farthest, so a failure tells you *where* the problem is:
 
 ```
-ping -c 3 <your-default-gateway>     # 1. local network reachable?
+ping -c 3 [your-default-gateway]     # 1. local network reachable?
 ping -c 3 1.1.1.1                     # 2. internet reachable by IP?
 ping -c 3 ubuntu.com                  # 3. name resolution working?
 ```
 
-Paste one result line from each into your report. Think about what each *rules out*:
+*(`ping` uses **ICMP** — the Internet Control Message Protocol — which is a separate protocol from TCP and UDP (the protocols web, SSH, and DNS use). That means a network can drop ICMP while everything else still works. See [`docs/07-glossary.md`](../../docs/07-glossary.md).)*
+
+> **Heads-up — Multipass on macOS drops outbound ICMP.** If all three pings show `100% packet loss` but DNS and HTTPS work (verify with `getent hosts ubuntu.com` and `curl -sI https://ubuntu.com`), your network is fine — the macOS NAT layer is silently filtering ICMP echo, not anything you did. The check script tests reachability via `getent`, not `ping`, so the lab will still pass. Paste the failing ping output as evidence and add a one-line note that ICMP is filtered by the host. The *concept* of layered testing is the lesson; `ping` happens to be the historical tool for it.
+
+Paste one result line from each into your report. Think about what each *rules out* (and remember the Multipass note above — these conclusions apply when ICMP is actually flowing):
 
 - If (1) fails, the problem is local (interface, cable/virtual network, gateway).
 - If (1) works but (2) fails, you can reach your LAN but not the internet (routing/gateway/upstream).

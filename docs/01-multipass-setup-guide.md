@@ -44,6 +44,8 @@ multipass version
 
 You should see a version number. If you get "command not found," the install did not complete — post a screenshot in the Q&A board.
 
+> **If `multipass version` already prints a version**, Multipass is installed — skip the install command above. (For example: if a friend helped you the first time, or you set up the course earlier and are coming back.)
+
 ---
 
 ## Part 2 — Launch Your Lab VM
@@ -95,6 +97,8 @@ The full walk-through (first-boot config, `gh auth login`, cloning your fork, da
 ---
 
 ## Part 3 — The Workflow You Will Repeat Every Lab
+
+> **New to Linux vocabulary?** A one-line definition of every technical term the labs use lives at [`docs/07-glossary.md`](07-glossary.md). Bookmark it — if a lab uses a word like `kernel`, `daemon`, `pipe`, `stdin`, or `SUID` without explaining it, that's where to look first.
 
 Every lab follows the same four steps. Learn them once here.
 
@@ -155,7 +159,43 @@ The short version: one continuous take with **`hostname`** → **`whoami`** → 
 
 ---
 
-## Part 5 — Managing Your VM Between Labs
+## Part 5 — Editing files inside the VM (and a Mac-vs-Windows keystroke tip)
+
+Several labs ask you to edit a file inside the VM — a notes template, a systemd unit file, `/etc/hosts`, fstab, and so on. You have two reasonable ways to do that:
+
+**Option A — `nano`, the friendly interactive editor (recommended for most students).**
+
+`nano` opens the file in a full-screen editor. Type your changes, then save and exit:
+
+```
+sudo nano /path/to/file
+# ... type your changes ...
+# Ctrl-O   (then Enter) to save
+# Ctrl-X                 to exit
+```
+
+`nano` uses the **Control** key — even on a Mac. `Cmd-S` does *nothing* inside `nano` (it's a macOS keyboard shortcut, not a terminal one). Other handy keys: `Ctrl-K` cuts a line, `Ctrl-U` pastes it back, `Ctrl-W` searches.
+
+> **Mac vs Windows keystroke tip.** macOS uses the `Command` key (⌘) where Windows uses `Ctrl` for most desktop shortcuts (`Cmd-C` to copy, `Cmd-W` to close), but the terminal — and Linux text editors like `nano` — speak the Linux/Unix convention. Inside the terminal and inside `nano`: `Ctrl-C` sends SIGINT (cancels the running command), `Ctrl-L` clears the screen, `Ctrl-O` saves in nano, `Ctrl-X` exits nano. `Cmd-S` does nothing. To copy text *from* the terminal you can still use `Cmd-C` (terminal native, not Linux) — but to send a SIGINT to a running command, use `Ctrl-C`. Bottom line: inside `nano`, think "Control, not Command."
+
+**Option B — `sudo tee` with a heredoc (for scripted or remote-driven workflows).**
+
+If you're driving the VM via `multipass exec`, `ssh -T`, or an automation script — anywhere there's no interactive terminal — `nano` won't work. The scripted equivalent is `sudo tee`:
+
+```
+sudo tee /path/to/file > /dev/null <<'EOF'
+the whole file contents go here
+multiple lines are fine
+EOF
+```
+
+The single-quoted `<<'EOF'` prevents the shell from expanding `$VAR` or `$(cmd)` inside your content — important when you're writing a systemd unit, a YAML file, or anything else with literal `$` characters. To **append** instead of overwrite, add `-a`: `sudo tee -a /etc/fstab > /dev/null <<'EOF' ... EOF`.
+
+Either approach produces the same file. Use `nano` when you're sitting in `multipass shell labvm`; use `sudo tee` when you're scripting against the VM from outside.
+
+---
+
+## Part 6 — Managing Your VM Between Labs
 
 A few commands you will use throughout the semester:
 
@@ -176,7 +216,7 @@ A few commands you will use throughout the semester:
 
 ---
 
-## Part 6 — Cloud Fallback (if your computer cannot run a VM)
+## Part 7 — Cloud Fallback (if your computer cannot run a VM)
 
 If your laptop genuinely cannot run Multipass, you can complete every lab on a free cloud VM instead. The commands are identical once you are connected by SSH; only the setup differs.
 

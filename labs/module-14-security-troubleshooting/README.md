@@ -28,13 +28,15 @@ By the end of this lab you will be able to:
 
 ## Start the Lab Environment
 
-> **Snapshot first.** This lab deliberately breaks things. From your computer's terminal — Multipass won't snapshot a running instance, so stop it first — take a *named* restore point before you begin (so you can find it later even if you have other snapshots), then start the VM again:
+> **SNAPSHOT FIRST — this lab plants real security issues and you'll be running fix commands as root.** Multipass cannot snapshot a running instance, so stop it, snapshot, then start again. From your computer's terminal — **do this now, before running setup**:
 >
 > ```
 > multipass stop labvm
 > multipass snapshot --name pre-mod14 labvm
 > multipass start labvm
 > ```
+>
+> If you get stuck, you can roll back with: `multipass stop labvm && multipass restore labvm.pre-mod14 && multipass start labvm`.
 
 Start `labvm` and shell into it (from your computer's terminal):
 
@@ -48,7 +50,15 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-14-security-troubleshooting/setup-security.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-14-security-troubleshooting/check-security.sh
-less setup-security.sh check-security.sh     # inspect before running anything as root; press q to exit
+# Optional safety review (this is the security module — worth the scan).
+# Skim each script for red flags: any 'rm -rf /', any 'curl ... | bash', any URL
+# not under raw.githubusercontent.com/opseval/, any unexpected modification of
+# /etc/passwd, /etc/shadow, /etc/sudoers.d/, or systemd unit paths outside
+# /etc/systemd/system/reportd.service (which IS this lab). The INTEGRITY: VERIFIED
+# line the check script prints is the stronger guarantee — this is the human-eye
+# supplement. Press q to exit each file.
+less setup-security.sh
+less check-security.sh
 sudo bash setup-security.sh
 ```
 
@@ -69,13 +79,15 @@ Somewhere under `/usr/local/bin` there is a custom helper that runs with **root 
 **2. A sensitive file is exposed.**
 There is payroll data on this system that the previous admin left readable and writable by everyone. Find it and apply least-privilege permissions so that **only root** can read or change it.
 
-> Hint: `find / -perm -0002 -type f 2>/dev/null` lists world-writable files.
+> Hint: `sudo find / -perm -0002 -type f -not -path '/proc/*' -not -path '/sys/*' 2>/dev/null` lists world-writable files. The `-not -path` filters skip kernel pseudo-files in `/proc` and `/sys` (which are mode 0666 by design and aren't real files on disk) — without them you'll wade through ~2,000 lines of noise to find the one real answer.
 
 **3. Something is eating the CPU.**
 Users report the machine is sluggish. Investigate with the process tools from Module 10 (`top`, `ps`, `pgrep`). Identify the runaway process — it is a "system optimizer" that should never have been installed — and stop it. (You do not need to permanently uninstall it for the check to pass; stopping it is enough, but think about how you would prevent it from coming back.)
 
+> The `pgrep -f` / `pkill -f` wrapper-shell gotcha from Module 10 applies here too: if you're driving via `multipass exec labvm -- bash -c '...'`, those flags may match the wrapping shell's own command line. Use `pgrep -x` against the executable name, or `ps -eo args | grep "/usr/local/bin/sysoptimizer" | grep -v grep`. If `pkill` makes your `exec` return non-zero, verify the kill worked with a separate `pgrep` rather than trusting the exit code.
+
 **4. A service keeps failing.**
-A service called `reportd` was configured to start at boot but it keeps failing. Use `systemctl status reportd` and `journalctl -u reportd` to find out *why* it fails — read the actual error, do not guess. Once you understand the root cause, **stop it and prevent it from auto-starting** (disable or mask it). In your incident report, state the root cause in one sentence.
+A service called `reportd` was configured to start at boot but it keeps failing. Use `systemctl status reportd` and `journalctl -u reportd` to find out *why* it fails — read the actual error, do not guess. Once you understand the root cause, **stop it and prevent it from auto-starting** with `sudo systemctl stop reportd && sudo systemctl disable reportd`. (Note: you may have seen `systemctl mask` mentioned for blocking a unit; `mask` works by creating a `/dev/null` symlink at the unit's path, which fails here because this lab's unit lives at `/etc/systemd/system/reportd.service` — `mask` refuses to overwrite an existing real file there. `mask` is appropriate for hiding distro-shipped units in `/lib/systemd/system/`; for locally-installed units like this one, `disable` is the right answer. If `systemctl --failed` still shows `reportd` after disable, run `sudo systemctl reset-failed reportd` to clear the sticky failure marker.) In your incident report, state the root cause in one sentence.
 
 **5. Survey the attack surface (assessment, not a fix).**
 A system's exposed network services are part of its attack surface — every service listening on a port is something an attacker could reach. Inventory what is listening:

@@ -53,7 +53,14 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-11-devices-and-mounting/setup-devices.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-11-devices-and-mounting/check-devices.sh
-less setup-devices.sh check-devices.sh     # inspect before running anything as root; press q to exit
+# Optional safety review (this lab touches loop devices — worth a quick scan).
+# Skim each script for red flags: any 'rm -rf /', any 'curl ... | bash', any URL
+# not under raw.githubusercontent.com/opseval/, any unexpected modification of
+# /etc/passwd, /etc/shadow, or /etc/sudoers.d/, or any write to /dev/sda*. The
+# INTEGRITY: VERIFIED line the check script prints is the stronger guarantee —
+# this is the human-eye supplement. Press q to exit each file.
+less setup-devices.sh
+less check-devices.sh
 sudo bash setup-devices.sh
 ```
 
@@ -178,7 +185,7 @@ df -hT | grep practicedisk     # confirm the fstab-driven mount worked — keep 
 sudo umount /mnt/practicedisk
 ```
 
-> **Use *your* home path.** The README shows `/home/ubuntu/...` because that's the Multipass default. If you're doing the cloud fallback as a different user, your fstab line and check evidence should use **your** real home directory (run `echo $HOME` to see it). The check accepts either.
+> **Use *your* home path.** The README shows `/home/ubuntu/...` because that's the Multipass default. If you're doing the cloud fallback as a different user, your fstab line and check evidence should use **your** real home directory (run `echo $HOME` to see it). The check accepts either. **`fstab` does NOT expand `~` or `$HOME`** — use the literal absolute path like `/home/ubuntu/loopdisk.img`, not `~/loopdisk.img`. (The check will tell you so if you get this wrong, but knowing it ahead of time saves a debug cycle.)
 
 Because the entry is `noauto`, a mistake in it can't break a future boot — and you proved it works by mounting it by name. **Keep this fstab line in place** (the check confirms a correctly-formatted line exists). Record your fstab line and the test result in your report:
 
@@ -230,8 +237,10 @@ A clean run reports the filesystem is clean / passes its passes. Record it:
 
 ```
 echo "=== fsck on the unmounted loop device ===" >> ~/module11-devices-report.txt
-sudo fsck -f /dev/loopX >> ~/module11-devices-report.txt 2>&1
+sudo fsck -fy /dev/loopX >> ~/module11-devices-report.txt 2>&1
 ```
+
+> The `-y` auto-answers "yes" to any repair prompts. On a freshly-`mkfs`'d filesystem there's nothing to repair so it doesn't matter, but `-y` is *required* when you redirect output to a file: closing stdin would otherwise make `fsck` exit with `need terminal for interactive repairs` (exit 8) if it finds anything to ask about — leaving an empty `report.txt` block where the evidence was supposed to be.
 
 > **Why unmounted?** A live filesystem has in-memory state (the page cache, open files, the journal) that hasn't been flushed. fsck assumes the on-disk image is static; if the kernel writes while fsck is "fixing," you get the corruption you were trying to prevent. That's why fsck refuses to run on a mounted rw filesystem unless you force it — and forcing it is how people destroy real data.
 

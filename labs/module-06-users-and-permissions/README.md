@@ -42,7 +42,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-06-users-and-permissions/setup-users.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-06-users-and-permissions/check-users.sh
-less setup-users.sh check-users.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-users.sh
 ```
 
@@ -83,6 +82,8 @@ Create the file `/salesteam/meeting-highlights.txt`. Make sure its group is **`s
 
 **3. Lock down the report script.**
 The file `/salesteam/generate_reports.sh` should be **executable by its owner only** — not by the group, not by others — and **not writable by the group or others either** (a script anyone can rewrite is just as dangerous as a script anyone can execute). Keep it readable. Set ownership to `$(whoami):salesteam` (i.e. *your* account and the `salesteam` group) and permissions accordingly.
+
+> "Keep it readable" leaves you some judgment. Several modes satisfy this spec — `700` (owner can rwx, nobody else can do anything; the script is "readable" only by its owner), `740` (owner rwx, group r--, others nothing), and `540` (owner r-x, group r--, others nothing) all pass the check. `755` does *not* pass because group + others get execute. Pick the mode that matches *your* read of "readable" and be ready to defend it in the reflection.
 
 **4. Run the script and verify its output.**
 Run the script using the execute bit you just set — `cd /salesteam && ./generate_reports.sh` — rather than `bash generate_reports.sh` (which would bypass the permission you're trying to test). Confirm that it creates **three quarterly reports** with the `.xls` extension in `/salesteam` (`Q1-report.xls`, `Q2-report.xls`, `Q3-report.xls`).

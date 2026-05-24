@@ -34,7 +34,9 @@ When you click "launch instance" on AWS, GCP, Azure, or Oracle Cloud, there is a
 
 ## Part A — Create an SSH key (the cloud way to log in)
 
-Cloud servers do not use passwords; they use **key pairs**. You keep a private key secret on the machine you connect from; the server holds your public key. In this lab the machine you connect from is your laptop's host OS (macOS, Linux, or Windows 10+ — all ship with `ssh-keygen` and `ssh`). If you already created `~/.ssh/id_ed25519` for Module 2, that same key works here — skip to Part B.
+> **Already have an SSH key from Module 2?** If `~/.ssh/id_ed25519.pub` exists on your laptop, you're done with Part A — **skip directly to Part B**. Cloud-init treats the *public* key as a string; same key, any number of servers.
+
+Cloud servers do not use passwords; they use **key pairs**. You keep a private key secret on the machine you connect from; the server holds your public key. In this lab the machine you connect from is your laptop's host OS (macOS, Linux, or Windows 10+ — all ship with `ssh-keygen` and `ssh`).
 
 **On your host computer's terminal** (skip the key-creation steps if you already made `~/.ssh/id_ed25519` for Module 2 — that same key works here):
 
@@ -100,6 +102,8 @@ exit
 
 ## Part C — Launch a server that builds itself
 
+> **Heads-up — cumulative VM memory weight.** If you completed Lab 13a, you may still have `fileserver` running. Launching `cloudvm` will mean **three** 1 GB VMs (labvm + fileserver + cloudvm) plus your host OS and browser — that's tight on an 8 GB laptop. Stop `fileserver` first with `multipass stop fileserver` if you don't need it for this lab.
+
 The `multipass launch` command runs on your **host** (multipass is a host tool), but your edited file lives in `labvm`. Copy it out into your current directory, then launch:
 
 ```
@@ -162,7 +166,7 @@ This "throw it away and rebuild it from config" loop is itself a core cloud habi
 Find cloudvm's IP from your **host terminal**: `multipass list`. Then from your host (where your private key lives), connect to `cloudvm` as `clouduser` — no password:
 
 ```
-ssh -i ~/.ssh/id_ed25519 clouduser@<cloudvm-ip>
+ssh -i ~/.ssh/id_ed25519 clouduser@[cloudvm-ip]
 ```
 
 (The first time, SSH asks "are you sure you want to continue connecting?" — answer `yes`.) If you land in a shell without being asked for a password, you have configured key-based authentication exactly like a real cloud login.

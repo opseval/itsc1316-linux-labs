@@ -167,7 +167,10 @@ if grep -Eq '<[^>]+>' "$REPORT"; then placeholder_left=1; fi
 # Require the RECOMMENDED ACTION section to actually contain words (>= 15
 # non-space chars somewhere after the header), so an empty section fails.
 rec_filled=0
-rec_body="$(awk 'tolower($0) ~ /recommended action/{flag=1; next} flag' "$REPORT" \
+rec_body="$(awk '
+            /^[[:space:]]*RECOMMENDED ACTION/{flag=1; next}
+            flag && /^[[:space:]]*[A-Z][A-Z ]+:?[[:space:]]*$/{flag=0}
+            flag' "$REPORT" \
             | tr -d '[:space:]')"
 if (( ${#rec_body} >= 15 )); then rec_filled=1; fi
 

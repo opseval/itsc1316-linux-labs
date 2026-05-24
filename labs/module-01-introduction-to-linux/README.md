@@ -40,11 +40,12 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-01-introduction-to-linux/setup-intro.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-01-introduction-to-linux/check-intro.sh
-less setup-intro.sh check-intro.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-intro.sh
 ```
 
 This lab does **not** break anything — the setup script only drops a starter template at `~/module1-system-report.txt` for you to fill in. (No snapshot needed; you are only reading the system and writing one text file.)
+
+> **Re-running this lab?** If `~/module1-system-report.txt` already exists, the setup script will leave it alone so your prior work is safe. To start over with a fresh template: `rm ~/module1-system-report.txt && sudo bash setup-intro.sh`.
 
 ---
 
@@ -83,7 +84,7 @@ Run `uname -r` and then `uname -a`. The kernel is the core of the OS — the par
 Run `echo $SHELL` and `cat /etc/shells`. The shell is your text interface to the system — the program reading the commands you type. Record your login shell and a couple of the other shells available.
 
 **5. Confirm this is a headless (no-GUI) server.**
-Run `systemctl get-default`. On this VM it should report `multi-user.target` (text/headless) rather than `graphical.target`. Record it.
+Run `systemctl get-default`. On a fresh server install this is usually `multi-user.target` (text/headless), but some Ubuntu cloud images — including the default Multipass 22.04 build — keep the symlink at `graphical.target` even when no GUI is installed. Record whichever YOUR system prints; both are valid on a headless server because no display manager is wired in.
 
 > **Why headless?** Servers usually run with no graphical desktop at all. A GUI consumes RAM and CPU, adds software that can be attacked, and isn't needed when you administer the box over SSH. This is one of the biggest day-to-day differences from a typical Windows or macOS desktop.
 
@@ -91,7 +92,7 @@ Run `systemctl get-default`. On this VM it should report `multi-user.target` (te
 Run `ls /`. You'll see directories like `bin`, `etc`, `home`, `usr`, `var`. Everything on a Linux system hangs off this single root (`/`) — there are no drive letters like `C:`. Record the directory names you see.
 
 **7. Confirm the package manager.**
-Run `which apt` and then `dpkg -l | wc -l`. `apt` is Ubuntu's package manager — the tool the *distribution* uses to install, update, and remove software. The count from `dpkg -l | wc -l` is roughly how many packages were assembled to make your "Ubuntu." Record both.
+Run `which apt` and then `dpkg -l | wc -l`. `apt` is Ubuntu's package manager — the tool the *distribution* uses to install, update, and remove software. The count from `dpkg -l | wc -l` is roughly how many packages were assembled to make your "Ubuntu." Record both. *(The pipe `|` sends one command's output as input to the next — here, the list from `dpkg -l` is piped into `wc -l`, which counts the lines. See [`docs/07-glossary.md`](../../docs/07-glossary.md) for any other unfamiliar terms.)*
 
 > A distribution is essentially **the Linux kernel + a curated set of packages + a package manager to manage them.** That is what makes Ubuntu *Ubuntu* and not Fedora.
 
@@ -152,7 +153,7 @@ Do **not** delete `labvm` — every later lab reuses it.
 - [ ] Recorded the hostname, distro ID, and version
 - [ ] Recorded the exact `uname -r` kernel string and `uname -a`
 - [ ] Recorded the login shell and available shells
-- [ ] Confirmed the system is headless (`multi-user.target`)
+- [ ] Recorded the default target (`multi-user.target` or `graphical.target` — either is valid on a headless cloud image)
 - [ ] Listed the top of the filesystem (`ls /`)
 - [ ] Recorded the package manager path and the installed-package count
 - [ ] Replaced every `<run: ...>` placeholder with real output

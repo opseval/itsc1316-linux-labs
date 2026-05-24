@@ -53,7 +53,16 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-15-capstone/setup-capstone.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-15-capstone/check-capstone.sh
-less setup-capstone.sh check-capstone.sh     # inspect before running anything as root; press q to exit
+# Optional safety review (capstone — worth one last scan).
+# Skim each script for red flags: any 'rm -rf /', any 'curl ... | bash', any URL
+# not under raw.githubusercontent.com/opseval/, any unexpected modification of
+# /etc/passwd, /etc/shadow, or /etc/sudoers.d/, or any write outside the lab's
+# stated paths (/srv/inherited, /opt/finance, /usr/local/bin/datacruncher,
+# /etc/systemd/system/inheritd.service). The INTEGRITY: VERIFIED line the check
+# script prints is the stronger guarantee — this is the human-eye supplement.
+# Press q to exit each file.
+less setup-capstone.sh
+less check-capstone.sh
 sudo bash setup-capstone.sh
 ```
 
@@ -110,6 +119,8 @@ The machine feels sluggish. Something the previous admin left running is burning
 
 > Why this matters: nobody labels the bad process for you. You read `top`, find the CPU hog, confirm what it is, and stop it.
 
+> The `pgrep -f` / `pkill -f` wrapper-shell gotcha from Modules 10 and 14 applies again: if you're driving via `multipass exec labvm -- bash -c '...'`, those flags may match the wrapping shell's own command line. Use `pgrep -x` against the executable name, or `ps -eo args | grep "/usr/local/bin/datacruncher" | grep -v grep`. If `pkill` makes your `exec` return non-zero, verify the kill worked with a separate `pgrep` rather than trusting the exit code.
+
 ### Part 5 — Identify what is consuming disk space (`df`, `du`) — report only
 
 The disk is filling up. You need to find the culprit and **document it** (no deletion required — it lives under `/srv/inherited/archive-staging`).
@@ -135,7 +146,7 @@ A service named `inheritd` is installed but the previous admin never started or 
 Confirm the box can still reach the outside world and resolve names, and record what you found.
 
 **Specification:**
-- Verify reachability and/or DNS resolution using tools from Modules 9/13 (e.g. `ping -c 3 8.8.8.8`, `getent hosts ubuntu.com`, `dig`, `resolvectl status`).
+- Verify reachability and/or DNS resolution using tools from Modules 9/13. Lead with `getent hosts ubuntu.com` (or `dig +short ubuntu.com` / `resolvectl status`) — these test the same thing as `ping` but work even when the host filters ICMP. `ping -c 3 8.8.8.8` is optional and may show 100% loss on Multipass+macOS without that being a problem; if you include it, also include a non-ICMP probe so the evidence isn't ambiguous.
 - Record the result in your handover report (Part 8). (No system change is required if it already works — the deliverable is the evidence.)
 
 ### Part 8 — Write the handover report (the written component)

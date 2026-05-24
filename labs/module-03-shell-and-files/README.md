@@ -40,7 +40,6 @@ Then **inside `labvm`**, pull this lab's two scripts straight from the public co
 ```
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-03-shell-and-files/setup-shell.sh
 curl -fsSLO https://raw.githubusercontent.com/opseval/itsc1316-linux-labs/main/labs/module-03-shell-and-files/check-shell.sh
-less setup-shell.sh check-shell.sh     # inspect before running anything as root; press q to exit
 sudo bash setup-shell.sh
 ```
 
@@ -146,16 +145,22 @@ You will write `~/sysreport.sh`. When run, it writes a **one-line CSV** of facts
 
 # A variable holds the default output path.
 OUTFILE="${HOME}/sysreport.csv"
+# (The braces in ${HOME} are how you say "the variable named HOME" when its
+# name is touching other characters — see docs/07-glossary.md.)
 
 # Read an argument: if the user passed a filename, use it instead (if-test).
 if [[ -n "$1" ]]; then
   OUTFILE="$1"
 fi
+# ([[ -n "$1" ]] is a bash test: -n means "the string is non-empty"; the
+# matching -z means "empty." See docs/07-glossary.md → "test operator.")
 
 # Gather real facts about this machine.
 HOST="$(hostname)"
 KERNEL="$(uname -r)"
 TODAY="$(date '+%Y-%m-%d')"
+# ($(command) is "command substitution" — it runs the command and replaces
+# the $(...) with whatever it printed. See docs/07-glossary.md.)
 
 # Write the CSV header and one data row.
 echo "hostname,kernel,date" > "$OUTFILE"

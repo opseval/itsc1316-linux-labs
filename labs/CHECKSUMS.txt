@@ -23,7 +23,7 @@ ddc3a542b6fc40b012036a95ca109ae0bcca2f1c16d1885492c0b35668fbfd9a  labs/module-01
 e993c5d4e6902c3e823ed9ef85df1375d01e5ade7bda222cafea944140f795a8  labs/module-02-accessing-a-linux-system/check-access.sh
 c0bc7607fade2577658504d24d643a0fcc1b2c5bbdc78d16550158d3413267ec  labs/module-03-shell-and-files/check-shell.sh
 fc81e86e0b57b6c7f327f52b1421c89d9f4b102ae98a1b92de5de527c8b2c4fc  labs/module-04-filesystem-navigation/check-filesystem.sh
-b25d8f70617f670d7e60d9b33f74f8ed43a7ae3bb187ed4ff57ed844cd875456  labs/module-05-storage-monitoring/check-storage.sh
+4c1972faff94a637e3020d812ccd3a47940199984d1e0ea4a8e12a26e1a6c678  labs/module-05-storage-monitoring/check-storage.sh
 65164a656bc2c0fcc6df19df1a83c0f5dbee291404fb37971fce0dd4cb3cf77a  labs/module-06-users-and-permissions/check-users.sh
 575008f93bc495de9db9fcb8d55d02e4b31a2edecf525cc7efed1f0c9c071584  labs/module-07-software-and-archives/check-software.sh
 efebd44b2b7ecc94c8b1f535248fdc2c2ac49285cda0e78671bf89410f4896b5  labs/module-09-networking-fundamentals/check-netfund.sh
